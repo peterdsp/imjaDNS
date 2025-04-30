@@ -6,12 +6,17 @@
 //
 
 import SwiftUI
+import ComposableArchitecture
 
 @main
 struct imjaDNSApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            HomeView(
+                store: Store(initialState: HomeFeature.State()) {
+                    HomeFeature()
+                }
+            )
         }
     }
 }
