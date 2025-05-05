@@ -19,7 +19,7 @@ struct HomeFeature: Reducer {
     func reduce(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .changeDNS:
-            let newDNS = "8.8.8.8" // Example change
+            let newDNS = "8.8.8.8"  // Example change
             DNSManager.shared.changeDNS(to: newDNS)
             state.currentDNS = newDNS
             return .none

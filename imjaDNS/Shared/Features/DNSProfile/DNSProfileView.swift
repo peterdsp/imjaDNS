@@ -9,19 +9,18 @@ import SwiftUI
 import ComposableArchitecture
 
 struct DNSProfileView: View {
-    @State private var store = Store(initialState: DNSProfileFeature.State()) {
-        DNSProfileFeature()
-    }
+    let store: StoreOf<DNSProfileFeature>
 
     var body: some View {
-        WithViewStore(store, observe: \ .self) { viewStore in
+        WithViewStore(self.store, observe: { $0 }) { viewStore in
             List {
                 ForEach(viewStore.profiles) { profile in
                     Button(action: {
-                        ViewStore(store).send(.selectProfile(profile))
+                        viewStore.send(.selectProfile(profile))
                     }) {
                         VStack(alignment: .leading) {
-                            Text(profile.name).font(.headline)
+                            Text(profile.name)
+                                .font(.headline)
                             Text(profile.servers.joined(separator: ", "))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
