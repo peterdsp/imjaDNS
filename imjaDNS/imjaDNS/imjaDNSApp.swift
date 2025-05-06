@@ -26,7 +26,6 @@ struct SettingsView: View {
 struct imjaDNSApp: App {
     var body: some Scene {
         WindowGroup {
-            #if os(iOS)
             TabView {
                 NavigationStack {
                     HomeView(
@@ -57,7 +56,6 @@ struct imjaDNSApp: App {
                     Label("Settings", systemImage: "gearshape")
                 }
             }
-            #else
             NavigationStack {
                 VStack(spacing: 0) {
                     HomeView(
@@ -84,7 +82,6 @@ struct imjaDNSApp: App {
             }
             .frame(minWidth: 400, idealWidth: 400, maxWidth: 400,
                    minHeight: 600, idealHeight: 600, maxHeight: 600)
-            #endif
         }
         .windowResizability(.contentSize)
     }

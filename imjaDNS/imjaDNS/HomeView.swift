@@ -11,10 +11,7 @@ import Network
 import NetworkExtension
 import CoreLocation
 import CoreTelephony
-
-#if os(iOS)
 import SystemConfiguration.CaptiveNetwork
-#endif
 
 struct HomeView: View {
     let store: StoreOf<HomeFeature>
@@ -119,7 +116,6 @@ struct HomeView: View {
         monitor.pathUpdateHandler = { path in
             DispatchQueue.main.async {
                 if path.usesInterfaceType(.wifi) {
-                    #if os(iOS)
                     let ssid = fetchSSID() ?? "Wi-Fi"
                     self.networkName = "Wi-Fi: \(ssid)"
                     #else
@@ -138,7 +134,6 @@ struct HomeView: View {
         monitor.start(queue: .global(qos: .background))
     }
 
-    #if os(iOS)
     func fetchSSID() -> String? {
         if let interfaces = CNCopySupportedInterfaces() as? [String] {
             for interface in interfaces {
@@ -173,31 +168,21 @@ struct HomeView: View {
 
         return nil
     }
-    #endif
 
     func loadSystemDNS() {
-        #if os(macOS)
-        let task = Process()
-        task.launchPath = "/usr/sbin/scutil"
-        task.arguments = ["--dns"]
-
-        let pipe = Pipe()
-        task.standardOutput = pipe
-
-        task.launch()
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        task.waitUntilExit()
-
-        if let output = String(data: data, encoding: .utf8) {
-            if let match = output.components(separatedBy: "nameserver ").dropFirst().first?.components(separatedBy: "\n").first {
+        NETunnelProviderManager.loadAllFromPreferences { managers, error in
+            if let manager = managers?.first(where: { $0.localizedDescription == "imjaDNS Tunnel" }),
+               let dns = (manager.protocolConfiguration as? NETunnelProviderProtocol)?
+                            .providerConfiguration?["dns"] as? String {
                 DispatchQueue.main.async {
-                    self.currentSystemDNS = match
+                    self.currentSystemDNS = dns
+                }
+            } else {
+                DispatchQueue.main.async {
+                    self.currentSystemDNS = "Auto-assigned"
                 }
             }
         }
-        #else
-        self.currentSystemDNS = "Auto-assigned"
-        #endif
     }
     
     func setupAndStartVPN() {
