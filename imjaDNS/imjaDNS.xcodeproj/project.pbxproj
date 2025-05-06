@@ -7,231 +7,328 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2CB883832DC23155006F770B /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 2CB883822DC23155006F770B /* ComposableArchitecture */; };
+		2C198AF52DCA03110036EF30 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 2C198AF42DCA03110036EF30 /* ComposableArchitecture */; };
+		2C198B102DCA26640036EF30 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C198B0F2DCA26640036EF30 /* NetworkExtension.framework */; };
+		2C198B182DCA26640036EF30 /* DNSPacketTunnel.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2C198B0D2DCA26640036EF30 /* DNSPacketTunnel.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		2CB882E72DC22000006F770B /* PBXContainerItemProxy */ = {
+		2C198AD72DCA02AD0036EF30 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 2CB882D02DC21FFE006F770B /* Project object */;
+			containerPortal = 2C198AC02DCA02AC0036EF30 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 2CB882D72DC21FFE006F770B;
+			remoteGlobalIDString = 2C198AC72DCA02AC0036EF30;
 			remoteInfo = imjaDNS;
 		};
-		2CB882F12DC22000006F770B /* PBXContainerItemProxy */ = {
+		2C198AE12DCA02AD0036EF30 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 2CB882D02DC21FFE006F770B /* Project object */;
+			containerPortal = 2C198AC02DCA02AC0036EF30 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 2CB882D72DC21FFE006F770B;
+			remoteGlobalIDString = 2C198AC72DCA02AC0036EF30;
 			remoteInfo = imjaDNS;
+		};
+		2C198B162DCA26640036EF30 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2C198AC02DCA02AC0036EF30 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2C198B0C2DCA26640036EF30;
+			remoteInfo = DNSPacketTunnel;
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		2C198B1D2DCA26640036EF30 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				2C198B182DCA26640036EF30 /* DNSPacketTunnel.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		2CB882D82DC21FFE006F770B /* imjaDNS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = imjaDNS.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		2CB882E62DC22000006F770B /* imjaDNSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = imjaDNSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		2CB882F02DC22000006F770B /* imjaDNSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = imjaDNSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2C198AC82DCA02AC0036EF30 /* imjaDNS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = imjaDNS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2C198AD62DCA02AD0036EF30 /* imjaDNSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = imjaDNSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2C198AE02DCA02AD0036EF30 /* imjaDNSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = imjaDNSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2C198B0D2DCA26640036EF30 /* DNSPacketTunnel.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DNSPacketTunnel.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		2C198B0F2DCA26640036EF30 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		2C198B192DCA26640036EF30 /* Exceptions for "DNSPacketTunnel" folder in "DNSPacketTunnel" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 2C198B0C2DCA26640036EF30 /* DNSPacketTunnel */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		2CB882DA2DC21FFE006F770B /* imjaDNS */ = {
+		2C198ACA2DCA02AC0036EF30 /* imjaDNS */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = imjaDNS;
 			sourceTree = "<group>";
 		};
-		2CB882E92DC22000006F770B /* imjaDNSTests */ = {
+		2C198AD92DCA02AD0036EF30 /* imjaDNSTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = imjaDNSTests;
 			sourceTree = "<group>";
 		};
-		2CB882F32DC22000006F770B /* imjaDNSUITests */ = {
+		2C198AE32DCA02AD0036EF30 /* imjaDNSUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = imjaDNSUITests;
+			sourceTree = "<group>";
+		};
+		2C198B112DCA26640036EF30 /* DNSPacketTunnel */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				2C198B192DCA26640036EF30 /* Exceptions for "DNSPacketTunnel" folder in "DNSPacketTunnel" target */,
+			);
+			path = DNSPacketTunnel;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		2CB882D52DC21FFE006F770B /* Frameworks */ = {
+		2C198AC52DCA02AC0036EF30 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2CB883832DC23155006F770B /* ComposableArchitecture in Frameworks */,
+				2C198AF52DCA03110036EF30 /* ComposableArchitecture in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2CB882E32DC22000006F770B /* Frameworks */ = {
+		2C198AD32DCA02AD0036EF30 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2CB882ED2DC22000006F770B /* Frameworks */ = {
+		2C198ADD2DCA02AD0036EF30 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2C198B0A2DCA26640036EF30 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2C198B102DCA26640036EF30 /* NetworkExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2CB882CF2DC21FFE006F770B = {
+		2C198ABF2DCA02AC0036EF30 = {
 			isa = PBXGroup;
 			children = (
-				2CB882DA2DC21FFE006F770B /* imjaDNS */,
-				2CB882E92DC22000006F770B /* imjaDNSTests */,
-				2CB882F32DC22000006F770B /* imjaDNSUITests */,
-				2CB882D92DC21FFE006F770B /* Products */,
+				2C198ACA2DCA02AC0036EF30 /* imjaDNS */,
+				2C198AD92DCA02AD0036EF30 /* imjaDNSTests */,
+				2C198AE32DCA02AD0036EF30 /* imjaDNSUITests */,
+				2C198B112DCA26640036EF30 /* DNSPacketTunnel */,
+				2C198B0E2DCA26640036EF30 /* Frameworks */,
+				2C198AC92DCA02AC0036EF30 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		2CB882D92DC21FFE006F770B /* Products */ = {
+		2C198AC92DCA02AC0036EF30 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2CB882D82DC21FFE006F770B /* imjaDNS.app */,
-				2CB882E62DC22000006F770B /* imjaDNSTests.xctest */,
-				2CB882F02DC22000006F770B /* imjaDNSUITests.xctest */,
+				2C198AC82DCA02AC0036EF30 /* imjaDNS.app */,
+				2C198AD62DCA02AD0036EF30 /* imjaDNSTests.xctest */,
+				2C198AE02DCA02AD0036EF30 /* imjaDNSUITests.xctest */,
+				2C198B0D2DCA26640036EF30 /* DNSPacketTunnel.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		2C198B0E2DCA26640036EF30 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2C198B0F2DCA26640036EF30 /* NetworkExtension.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		2CB882D72DC21FFE006F770B /* imjaDNS */ = {
+		2C198AC72DCA02AC0036EF30 /* imjaDNS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2CB882FA2DC22000006F770B /* Build configuration list for PBXNativeTarget "imjaDNS" */;
+			buildConfigurationList = 2C198AEA2DCA02AD0036EF30 /* Build configuration list for PBXNativeTarget "imjaDNS" */;
 			buildPhases = (
-				2CB882D42DC21FFE006F770B /* Sources */,
-				2CB882D52DC21FFE006F770B /* Frameworks */,
-				2CB882D62DC21FFE006F770B /* Resources */,
+				2C198AC42DCA02AC0036EF30 /* Sources */,
+				2C198AC52DCA02AC0036EF30 /* Frameworks */,
+				2C198AC62DCA02AC0036EF30 /* Resources */,
+				2C198B1D2DCA26640036EF30 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				2C198B172DCA26640036EF30 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				2CB882DA2DC21FFE006F770B /* imjaDNS */,
+				2C198ACA2DCA02AC0036EF30 /* imjaDNS */,
 			);
 			name = imjaDNS;
 			packageProductDependencies = (
-				2CB883822DC23155006F770B /* ComposableArchitecture */,
+				2C198AF42DCA03110036EF30 /* ComposableArchitecture */,
 			);
 			productName = imjaDNS;
-			productReference = 2CB882D82DC21FFE006F770B /* imjaDNS.app */;
+			productReference = 2C198AC82DCA02AC0036EF30 /* imjaDNS.app */;
 			productType = "com.apple.product-type.application";
 		};
-		2CB882E52DC22000006F770B /* imjaDNSTests */ = {
+		2C198AD52DCA02AD0036EF30 /* imjaDNSTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2CB882FD2DC22000006F770B /* Build configuration list for PBXNativeTarget "imjaDNSTests" */;
+			buildConfigurationList = 2C198AED2DCA02AD0036EF30 /* Build configuration list for PBXNativeTarget "imjaDNSTests" */;
 			buildPhases = (
-				2CB882E22DC22000006F770B /* Sources */,
-				2CB882E32DC22000006F770B /* Frameworks */,
-				2CB882E42DC22000006F770B /* Resources */,
+				2C198AD22DCA02AD0036EF30 /* Sources */,
+				2C198AD32DCA02AD0036EF30 /* Frameworks */,
+				2C198AD42DCA02AD0036EF30 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				2CB882E82DC22000006F770B /* PBXTargetDependency */,
+				2C198AD82DCA02AD0036EF30 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				2CB882E92DC22000006F770B /* imjaDNSTests */,
+				2C198AD92DCA02AD0036EF30 /* imjaDNSTests */,
 			);
 			name = imjaDNSTests;
 			packageProductDependencies = (
 			);
 			productName = imjaDNSTests;
-			productReference = 2CB882E62DC22000006F770B /* imjaDNSTests.xctest */;
+			productReference = 2C198AD62DCA02AD0036EF30 /* imjaDNSTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		2CB882EF2DC22000006F770B /* imjaDNSUITests */ = {
+		2C198ADF2DCA02AD0036EF30 /* imjaDNSUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2CB883002DC22000006F770B /* Build configuration list for PBXNativeTarget "imjaDNSUITests" */;
+			buildConfigurationList = 2C198AF02DCA02AD0036EF30 /* Build configuration list for PBXNativeTarget "imjaDNSUITests" */;
 			buildPhases = (
-				2CB882EC2DC22000006F770B /* Sources */,
-				2CB882ED2DC22000006F770B /* Frameworks */,
-				2CB882EE2DC22000006F770B /* Resources */,
+				2C198ADC2DCA02AD0036EF30 /* Sources */,
+				2C198ADD2DCA02AD0036EF30 /* Frameworks */,
+				2C198ADE2DCA02AD0036EF30 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				2CB882F22DC22000006F770B /* PBXTargetDependency */,
+				2C198AE22DCA02AD0036EF30 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				2CB882F32DC22000006F770B /* imjaDNSUITests */,
+				2C198AE32DCA02AD0036EF30 /* imjaDNSUITests */,
 			);
 			name = imjaDNSUITests;
 			packageProductDependencies = (
 			);
 			productName = imjaDNSUITests;
-			productReference = 2CB882F02DC22000006F770B /* imjaDNSUITests.xctest */;
+			productReference = 2C198AE02DCA02AD0036EF30 /* imjaDNSUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		2C198B0C2DCA26640036EF30 /* DNSPacketTunnel */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2C198B1A2DCA26640036EF30 /* Build configuration list for PBXNativeTarget "DNSPacketTunnel" */;
+			buildPhases = (
+				2C198B092DCA26640036EF30 /* Sources */,
+				2C198B0A2DCA26640036EF30 /* Frameworks */,
+				2C198B0B2DCA26640036EF30 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				2C198B112DCA26640036EF30 /* DNSPacketTunnel */,
+			);
+			name = DNSPacketTunnel;
+			packageProductDependencies = (
+			);
+			productName = DNSPacketTunnel;
+			productReference = 2C198B0D2DCA26640036EF30 /* DNSPacketTunnel.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		2CB882D02DC21FFE006F770B /* Project object */ = {
+		2C198AC02DCA02AC0036EF30 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1630;
 				LastUpgradeCheck = 1630;
 				TargetAttributes = {
-					2CB882D72DC21FFE006F770B = {
+					2C198AC72DCA02AC0036EF30 = {
 						CreatedOnToolsVersion = 16.3;
 					};
-					2CB882E52DC22000006F770B = {
+					2C198AD52DCA02AD0036EF30 = {
 						CreatedOnToolsVersion = 16.3;
-						TestTargetID = 2CB882D72DC21FFE006F770B;
+						TestTargetID = 2C198AC72DCA02AC0036EF30;
 					};
-					2CB882EF2DC22000006F770B = {
+					2C198ADF2DCA02AD0036EF30 = {
 						CreatedOnToolsVersion = 16.3;
-						TestTargetID = 2CB882D72DC21FFE006F770B;
+						TestTargetID = 2C198AC72DCA02AC0036EF30;
+					};
+					2C198B0C2DCA26640036EF30 = {
+						CreatedOnToolsVersion = 16.3;
 					};
 				};
 			};
-			buildConfigurationList = 2CB882D32DC21FFE006F770B /* Build configuration list for PBXProject "imjaDNS" */;
+			buildConfigurationList = 2C198AC32DCA02AC0036EF30 /* Build configuration list for PBXProject "imjaDNS" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = 2CB882CF2DC21FFE006F770B;
+			mainGroup = 2C198ABF2DCA02AC0036EF30;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				2CB883812DC23155006F770B /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
+				2C198AF32DCA03110036EF30 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
 			);
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 2CB882D92DC21FFE006F770B /* Products */;
+			productRefGroup = 2C198AC92DCA02AC0036EF30 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				2CB882D72DC21FFE006F770B /* imjaDNS */,
-				2CB882E52DC22000006F770B /* imjaDNSTests */,
-				2CB882EF2DC22000006F770B /* imjaDNSUITests */,
+				2C198AC72DCA02AC0036EF30 /* imjaDNS */,
+				2C198AD52DCA02AD0036EF30 /* imjaDNSTests */,
+				2C198ADF2DCA02AD0036EF30 /* imjaDNSUITests */,
+				2C198B0C2DCA26640036EF30 /* DNSPacketTunnel */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		2CB882D62DC21FFE006F770B /* Resources */ = {
+		2C198AC62DCA02AC0036EF30 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2CB882E42DC22000006F770B /* Resources */ = {
+		2C198AD42DCA02AD0036EF30 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2CB882EE2DC22000006F770B /* Resources */ = {
+		2C198ADE2DCA02AD0036EF30 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2C198B0B2DCA26640036EF30 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -241,21 +338,28 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		2CB882D42DC21FFE006F770B /* Sources */ = {
+		2C198AC42DCA02AC0036EF30 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2CB882E22DC22000006F770B /* Sources */ = {
+		2C198AD22DCA02AD0036EF30 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2CB882EC2DC22000006F770B /* Sources */ = {
+		2C198ADC2DCA02AD0036EF30 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2C198B092DCA26640036EF30 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -265,20 +369,25 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		2CB882E82DC22000006F770B /* PBXTargetDependency */ = {
+		2C198AD82DCA02AD0036EF30 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 2CB882D72DC21FFE006F770B /* imjaDNS */;
-			targetProxy = 2CB882E72DC22000006F770B /* PBXContainerItemProxy */;
+			target = 2C198AC72DCA02AC0036EF30 /* imjaDNS */;
+			targetProxy = 2C198AD72DCA02AD0036EF30 /* PBXContainerItemProxy */;
 		};
-		2CB882F22DC22000006F770B /* PBXTargetDependency */ = {
+		2C198AE22DCA02AD0036EF30 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 2CB882D72DC21FFE006F770B /* imjaDNS */;
-			targetProxy = 2CB882F12DC22000006F770B /* PBXContainerItemProxy */;
+			target = 2C198AC72DCA02AC0036EF30 /* imjaDNS */;
+			targetProxy = 2C198AE12DCA02AD0036EF30 /* PBXContainerItemProxy */;
+		};
+		2C198B172DCA26640036EF30 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2C198B0C2DCA26640036EF30 /* DNSPacketTunnel */;
+			targetProxy = 2C198B162DCA26640036EF30 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		2CB882F82DC22000006F770B /* Debug */ = {
+		2C198AE82DCA02AD0036EF30 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -340,7 +449,7 @@
 			};
 			name = Debug;
 		};
-		2CB882F92DC22000006F770B /* Release */ = {
+		2C198AE92DCA02AD0036EF30 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -394,7 +503,7 @@
 			};
 			name = Release;
 		};
-		2CB882FB2DC22000006F770B /* Debug */ = {
+		2C198AEB2DCA02AD0036EF30 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -405,12 +514,9 @@
 				DEVELOPMENT_TEAM = YTS4KJBX3P;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = NO;
-				GENERATE_PKGINFO_FILE = NO;
-				INFOPLIST_EXPAND_BUILD_SETTINGS = NO;
-				INFOPLIST_FILE = "$(SRCROOT)/imjaDNS/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = imjaDNS;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "We use your location to identify Wi-Fi networks in the background.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app uses location to access Wi-Fi SSID for DNS settings.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -424,23 +530,21 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 11.5;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.peterdsp.imjaDNS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
-				STRINGS_FILE_INFOPLIST_RENAME = NO;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx xros xrsimulator";
-				SUPPORTS_MACCATALYST = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,3,7";
-				XROS_DEPLOYMENT_TARGET = 1.3;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 2.0;
 			};
 			name = Debug;
 		};
-		2CB882FC2DC22000006F770B /* Release */ = {
+		2C198AEC2DCA02AD0036EF30 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -451,12 +555,9 @@
 				DEVELOPMENT_TEAM = YTS4KJBX3P;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = NO;
-				GENERATE_PKGINFO_FILE = NO;
-				INFOPLIST_EXPAND_BUILD_SETTINGS = NO;
-				INFOPLIST_FILE = "$(SRCROOT)/imjaDNS/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = imjaDNS;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "We use your location to identify Wi-Fi networks in the background.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app uses location to access Wi-Fi SSID for DNS settings.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -470,23 +571,21 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 11.5;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.peterdsp.imjaDNS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
-				STRINGS_FILE_INFOPLIST_RENAME = NO;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx xros xrsimulator";
-				SUPPORTS_MACCATALYST = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,3,7";
-				XROS_DEPLOYMENT_TARGET = 1.3;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 2.0;
 			};
 			name = Release;
 		};
-		2CB882FE2DC22000006F770B /* Debug */ = {
+		2C198AEE2DCA02AD0036EF30 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -509,7 +608,7 @@
 			};
 			name = Debug;
 		};
-		2CB882FF2DC22000006F770B /* Release */ = {
+		2C198AEF2DCA02AD0036EF30 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -532,7 +631,7 @@
 			};
 			name = Release;
 		};
-		2CB883012DC22000006F770B /* Debug */ = {
+		2C198AF12DCA02AD0036EF30 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -554,7 +653,7 @@
 			};
 			name = Debug;
 		};
-		2CB883022DC22000006F770B /* Release */ = {
+		2C198AF22DCA02AD0036EF30 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -573,44 +672,110 @@
 				TARGETED_DEVICE_FAMILY = "1,2,7";
 				TEST_TARGET_NAME = imjaDNS;
 				XROS_DEPLOYMENT_TARGET = 2.4;
+			};
+			name = Release;
+		};
+		2C198B1B2DCA26640036EF30 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = DNSPacketTunnel/DNSPacketTunnel.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YTS4KJBX3P;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DNSPacketTunnel/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DNSPacketTunnel;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.peterdsp.imjaDNS.DNSPacketTunnel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		2C198B1C2DCA26640036EF30 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = DNSPacketTunnel/DNSPacketTunnel.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YTS4KJBX3P;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DNSPacketTunnel/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DNSPacketTunnel;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.peterdsp.imjaDNS.DNSPacketTunnel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2CB882D32DC21FFE006F770B /* Build configuration list for PBXProject "imjaDNS" */ = {
+		2C198AC32DCA02AC0036EF30 /* Build configuration list for PBXProject "imjaDNS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2CB882F82DC22000006F770B /* Debug */,
-				2CB882F92DC22000006F770B /* Release */,
+				2C198AE82DCA02AD0036EF30 /* Debug */,
+				2C198AE92DCA02AD0036EF30 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2CB882FA2DC22000006F770B /* Build configuration list for PBXNativeTarget "imjaDNS" */ = {
+		2C198AEA2DCA02AD0036EF30 /* Build configuration list for PBXNativeTarget "imjaDNS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2CB882FB2DC22000006F770B /* Debug */,
-				2CB882FC2DC22000006F770B /* Release */,
+				2C198AEB2DCA02AD0036EF30 /* Debug */,
+				2C198AEC2DCA02AD0036EF30 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2CB882FD2DC22000006F770B /* Build configuration list for PBXNativeTarget "imjaDNSTests" */ = {
+		2C198AED2DCA02AD0036EF30 /* Build configuration list for PBXNativeTarget "imjaDNSTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2CB882FE2DC22000006F770B /* Debug */,
-				2CB882FF2DC22000006F770B /* Release */,
+				2C198AEE2DCA02AD0036EF30 /* Debug */,
+				2C198AEF2DCA02AD0036EF30 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2CB883002DC22000006F770B /* Build configuration list for PBXNativeTarget "imjaDNSUITests" */ = {
+		2C198AF02DCA02AD0036EF30 /* Build configuration list for PBXNativeTarget "imjaDNSUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2CB883012DC22000006F770B /* Debug */,
-				2CB883022DC22000006F770B /* Release */,
+				2C198AF12DCA02AD0036EF30 /* Debug */,
+				2C198AF22DCA02AD0036EF30 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2C198B1A2DCA26640036EF30 /* Build configuration list for PBXNativeTarget "DNSPacketTunnel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2C198B1B2DCA26640036EF30 /* Debug */,
+				2C198B1C2DCA26640036EF30 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -618,7 +783,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		2CB883812DC23155006F770B /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
+		2C198AF32DCA03110036EF30 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture.git";
 			requirement = {
@@ -629,12 +794,12 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		2CB883822DC23155006F770B /* ComposableArchitecture */ = {
+		2C198AF42DCA03110036EF30 /* ComposableArchitecture */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2CB883812DC23155006F770B /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
+			package = 2C198AF32DCA03110036EF30 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
 			productName = ComposableArchitecture;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
-	rootObject = 2CB882D02DC21FFE006F770B /* Project object */;
+	rootObject = 2C198AC02DCA02AC0036EF30 /* Project object */;
 }

@@ -10,6 +10,7 @@ import ComposableArchitecture
 import Network
 import NetworkExtension
 import CoreLocation
+import CoreTelephony
 
 #if os(iOS)
 import SystemConfiguration.CaptiveNetwork
@@ -127,7 +128,8 @@ struct HomeView: View {
                 } else if path.usesInterfaceType(.wiredEthernet) {
                     self.networkName = "Ethernet: Connected"
                 } else if path.usesInterfaceType(.cellular) {
-                    self.networkName = "Cellular"
+                    let carrier = getCarrierName() ?? "Cellular"
+                    self.networkName = "Cellular: \(carrier)"
                 } else {
                     self.networkName = "No Connection"
                 }
@@ -145,6 +147,30 @@ struct HomeView: View {
                 }
             }
         }
+        return nil
+    }
+
+    func getCarrierName() -> String? {
+        let networkInfo = CTTelephonyNetworkInfo()
+        
+        if #available(iOS 12.0, *) {
+            guard let carriers = networkInfo.serviceSubscriberCellularProviders else {
+                print("[Network] No carrier info available")
+                return nil
+            }
+
+            for carrier in carriers.values {
+                if let name = carrier.carrierName {
+                    return name
+                }
+            }
+        } else {
+            if let carrier = networkInfo.subscriberCellularProvider,
+               let name = carrier.carrierName {
+                return name
+            }
+        }
+
         return nil
     }
     #endif
@@ -172,5 +198,37 @@ struct HomeView: View {
         #else
         self.currentSystemDNS = "Auto-assigned"
         #endif
+    }
+    
+    func setupAndStartVPN() {
+        NETunnelProviderManager.loadAllFromPreferences { managers, error in
+            if let error = error {
+                print("Error loading preferences: \(error)")
+                return
+            }
+
+            let manager = managers?.first ?? NETunnelProviderManager()
+            let protocolConfiguration = NETunnelProviderProtocol()
+            protocolConfiguration.providerBundleIdentifier = "com.yourcompany.imjaDNS.DNSPacketTunnel"
+            protocolConfiguration.serverAddress = "DNS VPN"
+
+            manager.protocolConfiguration = protocolConfiguration
+            manager.localizedDescription = "imjaDNS VPN"
+            manager.isEnabled = true
+
+            manager.saveToPreferences { error in
+                if let error = error {
+                    print("Error saving preferences: \(error)")
+                    return
+                }
+
+                do {
+                    try manager.connection.startVPNTunnel()
+                    print("VPN started successfully.")
+                } catch {
+                    print("Error starting VPN: \(error)")
+                }
+            }
+        }
     }
 }

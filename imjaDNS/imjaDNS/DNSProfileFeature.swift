@@ -6,6 +6,7 @@
 //
 
 import ComposableArchitecture
+import Foundation
 
 struct DNSProfileFeature: Reducer {
     struct State: Equatable {
@@ -20,6 +21,7 @@ struct DNSProfileFeature: Reducer {
             DNSProfile(name: "Alternate DNS", servers: ["76.76.19.19", "76.223.122.150"])
         ]
         var customDNS: String = ""
+        var selectedProfileID: UUID? = nil
     }
 
     enum Action: Equatable {
@@ -31,6 +33,12 @@ struct DNSProfileFeature: Reducer {
     func reduce(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case let .selectProfile(profile):
+            // Remove previously selected custom profile if one exists
+            if let selectedID = state.selectedProfileID,
+               let index = state.profiles.firstIndex(where: { $0.id == selectedID && $0.name == "Custom" }) {
+                state.profiles.remove(at: index)
+            }
+            state.selectedProfileID = profile.id
             DNSManager.shared.changeDNS(to: profile.servers.first ?? "")
             return .none
 
@@ -41,9 +49,14 @@ struct DNSProfileFeature: Reducer {
         case .addCustomDNS:
             let trimmed = state.customDNS.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !trimmed.isEmpty else { return .none }
+
+            // Remove any previous custom DNS
+            state.profiles.removeAll { $0.name == "Custom" }
+
             let newProfile = DNSProfile(name: "Custom", servers: [trimmed])
             state.profiles.insert(newProfile, at: 0)
             state.customDNS = ""
+            state.selectedProfileID = newProfile.id
             DNSManager.shared.changeDNS(to: trimmed)
             return .none
         }
