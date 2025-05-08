@@ -4,15 +4,23 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>DNSPacketTunnel.xcscheme_^#shared#^_</key>
+		<key>Promises (Playground).xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>1</integer>
+			<integer>2</integer>
 		</dict>
 		<key>imjaDNS.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>0</integer>
+			<integer>1</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>2C198AC72DCA02AC0036EF30</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>
