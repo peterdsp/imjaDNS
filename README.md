@@ -44,4 +44,4 @@
 
 📄 License
 
-MIT License © Petros Dhespollari 2025
+[License © Petros Dhespollari 2025](https://github.com/peterdsp/imjaDNS/blob/f7de220642a1ca575f7e4ab2d2869e401fbe8147/LICENSE.md)
