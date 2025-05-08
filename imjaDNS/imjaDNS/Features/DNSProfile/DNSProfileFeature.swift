@@ -10,54 +10,86 @@ import Foundation
 
 struct DNSProfileFeature: Reducer {
     struct State: Equatable {
-        var profiles: [DNSProfile] = [
-            DNSProfile(name: "Google", servers: ["8.8.8.8", "8.8.4.4"]),
-            DNSProfile(name: "Control D", servers: ["76.76.2.0", "76.76.10.0"]),
-            DNSProfile(name: "Quad9", servers: ["9.9.9.9", "149.112.112.112"]),
-            DNSProfile(name: "OpenDNS Home", servers: ["208.67.222.222", "208.67.220.220"]),
-            DNSProfile(name: "Cloudflare", servers: ["1.1.1.1", "1.0.0.1"]),
-            DNSProfile(name: "AdGuard DNS", servers: ["94.140.14.14", "94.140.15.15"]),
-            DNSProfile(name: "CleanBrowsing", servers: ["185.228.168.9", "185.228.169.9"]),
-            DNSProfile(name: "Alternate DNS", servers: ["76.76.19.19", "76.223.122.150"])
-        ]
+        var profiles: [DNSProfile] = []
         var customDNS: String = ""
-        var selectedProfileID: UUID? = nil
+        var selectedProfileID: String? = nil
+        var isLoading: Bool = true
+        var hasLoadedOnce: Bool = false
     }
 
     enum Action: Equatable {
+        case onAppear
+        case profilesLoaded([DNSProfile])
         case selectProfile(DNSProfile)
         case updateCustomDNS(String)
         case addCustomDNS
+        case setLoading(Bool)
     }
 
     func reduce(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
-        case let .selectProfile(profile):
-            // Remove previously selected custom profile if one exists
-            if let selectedID = state.selectedProfileID,
-               let index = state.profiles.firstIndex(where: { $0.id == selectedID && $0.name == "Custom" }) {
-                state.profiles.remove(at: index)
+
+        case .onAppear:
+            guard !state.hasLoadedOnce else { return .none }
+            state.hasLoadedOnce = true
+            return .run { send in
+                do {
+                    let profiles = try await FirebaseManager.shared.fetchProfiles()
+                    await send(.profilesLoaded(profiles))
+                    await send(.setLoading(false))
+                } catch {
+                    print("[DNSProfileFeature] Failed to fetch profiles: \(error)")
+                    await send(.setLoading(false))
+                }
             }
-            state.selectedProfileID = profile.id
-            DNSManager.shared.changeDNS(to: profile.servers.first ?? "")
+
+        case let .profilesLoaded(profiles):
+            print("[DNSProfileFeature] Loaded profiles:")
+            for profile in profiles {
+                print("• \(profile.name) - ID: \(profile.id) - Servers: \(profile.servers.joined(separator: ", "))")
+            }
+
+            state.profiles = profiles
+            if let first = profiles.first {
+                state.selectedProfileID = first.id
+                return .run { _ in
+                    try? await DNSManager.shared.setServers(first.servers)
+                }
+            }
             return .none
 
-        case let .updateCustomDNS(input):
-            state.customDNS = input
+        case let .selectProfile(profile):
+            state.selectedProfileID = profile.id
+            return .run { _ in
+                try? await DNSManager.shared.setServers(profile.servers)
+            }
+
+        case let .updateCustomDNS(text):
+            state.customDNS = text
             return .none
 
         case .addCustomDNS:
             let trimmed = state.customDNS.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !trimmed.isEmpty else { return .none }
 
-            // Remove any previous custom DNS
+            let parts = trimmed
+                .replacingOccurrences(of: ",", with: " ")
+                .split(separator: " ")
+                .map { String($0) }
+
             state.profiles.removeAll { $0.name == "Custom" }
 
-            let newProfile = DNSProfile(name: "Custom", servers: [trimmed])
-            state.profiles.insert(newProfile, at: 0)
+            let profile = DNSProfile(id: UUID().uuidString, name: "Custom", servers: parts)
+            state.profiles.insert(profile, at: 0)
             state.customDNS = ""
-            state.selectedProfileID = newProfile.id
-            DNSManager.shared.changeDNS(to: trimmed)
+            state.selectedProfileID = profile.id
+
+            return .run { _ in
+                try? await DNSManager.shared.setServers(parts)
+            }
+
+        case let .setLoading(value):
+            state.isLoading = value
             return .none
         }
     }

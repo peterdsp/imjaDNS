@@ -12,7 +12,7 @@ struct HomeFeature: Reducer {
     struct State: Equatable {
         var currentDNS: String = "Loading..."
         var networkName: String = "..."
-        var showLocationAlert: Bool = false
+        var showFirstTimeDNSAlert: Bool = false
     }
 
     enum Action: Equatable {
@@ -20,7 +20,7 @@ struct HomeFeature: Reducer {
         case updateCurrentDNS(String)
         case changeDNS
         case updateNetworkName(String)
-        case toggleLocationAlert(Bool)
+        case toggleDNSAlert(Bool)
     }
 
     func reduce(into state: inout State, action: Action) -> Effect<Action> {
@@ -30,31 +30,36 @@ struct HomeFeature: Reducer {
                 let dns = await DNSManager.shared.getCurrentDNS()
                 await send(.updateCurrentDNS(dns))
 
-                if UserDefaults.standard.bool(forKey: "autoApplyDNS") {
-                    // Automatically reapply last used DNS if stored
-                    if let lastUsedDNS = UserDefaults.standard.string(forKey: "lastUsedDNS") {
-                        DNSManager.shared.changeDNS(to: lastUsedDNS)
-                        await send(.updateCurrentDNS(lastUsedDNS))
-                    }
+                if !UserDefaults.standard.bool(forKey: UserDefaultsKeys.hasShownDNSAlert) {
+                    await send(.toggleDNSAlert(true))
+                    UserDefaults.standard.set(true, forKey: UserDefaultsKeys.hasShownDNSAlert)
+                }
+
+                if UserDefaults.standard.bool(forKey: UserDefaultsKeys.autoApplyDNS),
+                   let lastUsedDNS = UserDefaults.standard.string(forKey: UserDefaultsKeys.lastUsedDNS) {
+                    try? await DNSManager.shared.setServers([lastUsedDNS])
+                    await send(.updateCurrentDNS(lastUsedDNS))
                 }
             }
 
         case let .updateCurrentDNS(dns):
             state.currentDNS = dns
             return .none
-
+            
+        case let .toggleDNSAlert(value):
+            state.showFirstTimeDNSAlert = value
+            return .none
+            
         case .changeDNS:
             let newDNS = "8.8.8.8"
-            DNSManager.shared.changeDNS(to: newDNS)
-            state.currentDNS = newDNS
-            return .none
+            return .run { send in
+                try? await DNSManager.shared.setServers([newDNS])
+                await send(.updateCurrentDNS(newDNS))
+                UserDefaults.standard.set(newDNS, forKey: UserDefaultsKeys.lastUsedDNS)
+            }
 
         case let .updateNetworkName(name):
             state.networkName = name
-            return .none
-
-        case let .toggleLocationAlert(show):
-            state.showLocationAlert = show
             return .none
         }
     }

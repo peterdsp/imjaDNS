@@ -8,10 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		2C198AF52DCA03110036EF30 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 2C198AF42DCA03110036EF30 /* ComposableArchitecture */; };
-		2C19FDB52DCA44B30036EF30 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C198B0F2DCA26640036EF30 /* NetworkExtension.framework */; };
-		2C19FDB62DCA44B30036EF30 /* NetworkExtension.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2C198B0F2DCA26640036EF30 /* NetworkExtension.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		2C19FDC32DCA4DF40036EF30 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C19FDBB2DCA46430036EF30 /* NetworkExtension.framework */; };
-		2C9DDB1A2DCB5DD0004F33BD /* DNSPacketTunnel.appex in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2C19B4F72DCA43E10036EF30 /* DNSPacketTunnel.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		2C9DDB392DCB8F07004F33BD /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 2C9DDB382DCB8F07004F33BD /* FirebaseAnalytics */; };
+		2C9DDB472DCB9690004F33BD /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = 2C9DDB462DCB9690004F33BD /* FirebaseRemoteConfig */; };
+		2C9DDB492DCB96A3004F33BD /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 2C9DDB482DCB96A3004F33BD /* FirebaseCore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,52 +28,12 @@
 			remoteGlobalIDString = 2C198AC72DCA02AC0036EF30;
 			remoteInfo = imjaDNS;
 		};
-		2C19FDC72DCA4DF70036EF30 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2C198AC02DCA02AC0036EF30 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2C198B0C2DCA26640036EF30;
-			remoteInfo = DNSPacketTunnel;
-		};
-		2C19FDCA2DCA4E060036EF30 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2C198AC02DCA02AC0036EF30 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2C198B0C2DCA26640036EF30;
-			remoteInfo = DNSPacketTunnel;
-		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		2C19FDB72DCA44B30036EF30 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				2C19FDB62DCA44B30036EF30 /* NetworkExtension.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2C19FDC52DCA4DF40036EF30 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				2C9DDB1A2DCB5DD0004F33BD /* DNSPacketTunnel.appex in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		2C198AC82DCA02AC0036EF30 /* imjaDNS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = imjaDNS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C198AD62DCA02AD0036EF30 /* imjaDNSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = imjaDNSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C198AE02DCA02AD0036EF30 /* imjaDNSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = imjaDNSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		2C198B0D2DCA26640036EF30 /* DNSPacketTunnel.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DNSPacketTunnel.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C198B0F2DCA26640036EF30 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		2C198B1E2DCA43E10036EF30 /* AnyScheduler.d */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.dtrace; path = AnyScheduler.d; sourceTree = "<group>"; };
 		2C198B1F2DCA43E10036EF30 /* AnyScheduler.dia */ = {isa = PBXFileReference; lastKnownFileType = file; path = AnyScheduler.dia; sourceTree = "<group>"; };
@@ -24708,13 +24667,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		2C198B192DCA26640036EF30 /* Exceptions for "VPN Extension" folder in "DNSPacketTunnel" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 2C198B0C2DCA26640036EF30 /* DNSPacketTunnel */;
-		};
 		2C19FDC22DCA49600036EF30 /* Exceptions for "imjaDNS" folder in "imjaDNS" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -24749,14 +24701,6 @@
 			path = imjaDNS;
 			sourceTree = "<group>";
 		};
-		2C198B112DCA26640036EF30 /* VPN Extension */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				2C198B192DCA26640036EF30 /* Exceptions for "VPN Extension" folder in "DNSPacketTunnel" target */,
-			);
-			path = "VPN Extension";
-			sourceTree = "<group>";
-		};
 		2C9DDB1E2DCB7BCB004F33BD /* Tests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -24774,7 +24718,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				2C198AF52DCA03110036EF30 /* ComposableArchitecture in Frameworks */,
-				2C19FDC32DCA4DF40036EF30 /* NetworkExtension.framework in Frameworks */,
+				2C9DDB472DCB9690004F33BD /* FirebaseRemoteConfig in Frameworks */,
+				2C9DDB492DCB96A3004F33BD /* FirebaseCore in Frameworks */,
+				2C9DDB392DCB8F07004F33BD /* FirebaseAnalytics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -24792,14 +24738,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2C198B0A2DCA26640036EF30 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				2C19FDB52DCA44B30036EF30 /* NetworkExtension.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -24808,7 +24746,6 @@
 			children = (
 				2C198ACA2DCA02AC0036EF30 /* imjaDNS */,
 				2C9DDB1E2DCB7BCB004F33BD /* Tests */,
-				2C198B112DCA26640036EF30 /* VPN Extension */,
 				2C198B0E2DCA26640036EF30 /* Frameworks */,
 				2C198AC92DCA02AC0036EF30 /* Products */,
 			);
@@ -24820,7 +24757,6 @@
 				2C198AC82DCA02AC0036EF30 /* imjaDNS.app */,
 				2C198AD62DCA02AD0036EF30 /* imjaDNSTests.xctest */,
 				2C198AE02DCA02AD0036EF30 /* imjaDNSUITests.xctest */,
-				2C198B0D2DCA26640036EF30 /* DNSPacketTunnel.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -87073,13 +87009,10 @@
 				2C198AC42DCA02AC0036EF30 /* Sources */,
 				2C198AC52DCA02AC0036EF30 /* Frameworks */,
 				2C198AC62DCA02AC0036EF30 /* Resources */,
-				2C19FDC52DCA4DF40036EF30 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				2C19FDC82DCA4DF70036EF30 /* PBXTargetDependency */,
-				2C19FDCB2DCA4E060036EF30 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				2C198ACA2DCA02AC0036EF30 /* imjaDNS */,
@@ -87087,6 +87020,9 @@
 			name = imjaDNS;
 			packageProductDependencies = (
 				2C198AF42DCA03110036EF30 /* ComposableArchitecture */,
+				2C9DDB382DCB8F07004F33BD /* FirebaseAnalytics */,
+				2C9DDB462DCB9690004F33BD /* FirebaseRemoteConfig */,
+				2C9DDB482DCB96A3004F33BD /* FirebaseCore */,
 			);
 			productName = imjaDNS;
 			productReference = 2C198AC82DCA02AC0036EF30 /* imjaDNS.app */;
@@ -87135,29 +87071,6 @@
 			productReference = 2C198AE02DCA02AD0036EF30 /* imjaDNSUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
-		2C198B0C2DCA26640036EF30 /* DNSPacketTunnel */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 2C198B1A2DCA26640036EF30 /* Build configuration list for PBXNativeTarget "DNSPacketTunnel" */;
-			buildPhases = (
-				2C198B092DCA26640036EF30 /* Sources */,
-				2C198B0A2DCA26640036EF30 /* Frameworks */,
-				2C198B0B2DCA26640036EF30 /* Resources */,
-				2C19FDB72DCA44B30036EF30 /* Embed Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				2C198B112DCA26640036EF30 /* VPN Extension */,
-			);
-			name = DNSPacketTunnel;
-			packageProductDependencies = (
-			);
-			productName = DNSPacketTunnel;
-			productReference = 2C198B0D2DCA26640036EF30 /* DNSPacketTunnel.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -87179,9 +87092,6 @@
 						CreatedOnToolsVersion = 16.3;
 						TestTargetID = 2C198AC72DCA02AC0036EF30;
 					};
-					2C198B0C2DCA26640036EF30 = {
-						CreatedOnToolsVersion = 16.3;
-					};
 				};
 			};
 			buildConfigurationList = 2C198AC32DCA02AC0036EF30 /* Build configuration list for PBXProject "imjaDNS" */;
@@ -87195,6 +87105,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				2C198AF32DCA03110036EF30 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
+				2C9DDB372DCB8F07004F33BD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2C198AC92DCA02AC0036EF30 /* Products */;
@@ -87204,7 +87115,6 @@
 				2C198AC72DCA02AC0036EF30 /* imjaDNS */,
 				2C198AD52DCA02AD0036EF30 /* imjaDNSTests */,
 				2C198ADF2DCA02AD0036EF30 /* imjaDNSUITests */,
-				2C198B0C2DCA26640036EF30 /* DNSPacketTunnel */,
 			);
 		};
 /* End PBXProject section */
@@ -87225,13 +87135,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		2C198ADE2DCA02AD0036EF30 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2C198B0B2DCA26640036EF30 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -87262,13 +87165,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2C198B092DCA26640036EF30 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -87281,16 +87177,6 @@
 			isa = PBXTargetDependency;
 			target = 2C198AC72DCA02AC0036EF30 /* imjaDNS */;
 			targetProxy = 2C198AE12DCA02AD0036EF30 /* PBXContainerItemProxy */;
-		};
-		2C19FDC82DCA4DF70036EF30 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2C198B0C2DCA26640036EF30 /* DNSPacketTunnel */;
-			targetProxy = 2C19FDC72DCA4DF70036EF30 /* PBXContainerItemProxy */;
-		};
-		2C19FDCB2DCA4E060036EF30 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2C198B0C2DCA26640036EF30 /* DNSPacketTunnel */;
-			targetProxy = 2C19FDCA2DCA4E060036EF30 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -87597,63 +87483,6 @@
 			};
 			name = Release;
 		};
-		2C198B1B2DCA26640036EF30 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "VPN Extension/DNSPacketTunnel.entitlements";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = YTS4KJBX3P;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "VPN Extension/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = DNSPacketTunnel;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dev.peterdsp.imjaDNS.DNSPacketTunnel;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		2C198B1C2DCA26640036EF30 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "VPN Extension/DNSPacketTunnel.entitlements";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = YTS4KJBX3P;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "VPN Extension/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = DNSPacketTunnel;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dev.peterdsp.imjaDNS.DNSPacketTunnel;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -87693,15 +87522,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2C198B1A2DCA26640036EF30 /* Build configuration list for PBXNativeTarget "DNSPacketTunnel" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				2C198B1B2DCA26640036EF30 /* Debug */,
-				2C198B1C2DCA26640036EF30 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -87713,6 +87533,14 @@
 				minimumVersion = 1.19.1;
 			};
 		};
+		2C9DDB372DCB8F07004F33BD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.12.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -87720,6 +87548,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2C198AF32DCA03110036EF30 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
 			productName = ComposableArchitecture;
+		};
+		2C9DDB382DCB8F07004F33BD /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C9DDB372DCB8F07004F33BD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		2C9DDB462DCB9690004F33BD /* FirebaseRemoteConfig */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C9DDB372DCB8F07004F33BD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseRemoteConfig;
+		};
+		2C9DDB482DCB96A3004F33BD /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C9DDB372DCB8F07004F33BD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

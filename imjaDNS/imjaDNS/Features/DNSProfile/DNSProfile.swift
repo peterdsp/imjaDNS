@@ -8,13 +8,7 @@
 import Foundation
 
 struct DNSProfile: Identifiable, Codable, Equatable {
-    let id: UUID
-    var name: String
-    var servers: [String]
-
-    init(id: UUID = UUID(), name: String, servers: [String]) {
-        self.id = id
-        self.name = name
-        self.servers = servers
-    }
+    let id: String
+    let name: String
+    let servers: [String]
 }

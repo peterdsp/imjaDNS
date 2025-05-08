@@ -7,88 +7,72 @@
 
 import Foundation
 import NetworkExtension
+import os.log
 
-class DNSManager {
+@MainActor
+final class DNSManager {
     static let shared = DNSManager()
     private init() {}
-    
-    func getCurrentDNS() async -> String {
-        await withCheckedContinuation { continuation in
-            NETunnelProviderManager.loadAllFromPreferences { managers, error in
-                if let error = error {
-                    print("[DNSManager] Error loading preferences: \(error)")
-                    continuation.resume(returning: "Auto-assigned")
-                    return
-                }
-                
-                guard let manager = managers?.first(where: { $0.localizedDescription == "imjaDNS Tunnel" }),
-                      let dns = (manager.protocolConfiguration as? NETunnelProviderProtocol)?
-                    .providerConfiguration?["dns"] as? String,
-                      !dns.isEmpty else {
-                    continuation.resume(returning: "Auto-assigned")
-                    return
-                }
-                
-                continuation.resume(returning: dns)
+
+    private let log = Logger(subsystem: "dev.peterdsp.imjaDNS", category: "DNS")
+
+    func currentServers() async -> String {
+        do {
+            let mgr = NEDNSSettingsManager.shared()
+            try await mgr.loadFromPreferences()
+
+            guard let dnsSettings = mgr.dnsSettings,
+                  !dnsSettings.servers.isEmpty else {
+                return "Auto-assigned"
             }
+
+            return dnsSettings.servers.joined(separator: ", ")
+        } catch {
+            log.error("Failed to load DNS config: \(String(describing: error), privacy: .public)")
+            return "Auto-assigned"
         }
     }
-    
+
+    func setServers(_ servers: [String], matchDomains: [String] = [""]) async throws {
+        log.info("Setting DNS servers: \(servers, privacy: .public)")
+
+        let mgr = NEDNSSettingsManager.shared()
+        try await mgr.loadFromPreferences()
+
+        let settings = NEDNSSettings(servers: servers)
+        settings.matchDomains = matchDomains.isEmpty ? nil : matchDomains
+        mgr.dnsSettings = settings
+
+        try await mgr.saveToPreferences()
+        try await mgr.loadFromPreferences()
+
+        if let primary = servers.first {
+            UserDefaults.standard.set(primary, forKey: "lastUsedDNS")
+            log.info("Saved primary DNS to UserDefaults: \(primary, privacy: .public)")
+        }
+
+        log.info("✅ DNS successfully updated and saved.")
+    }
+
+    func disableCustomDNS() async {
+        do {
+            let mgr = NEDNSSettingsManager.shared()
+            try await mgr.loadFromPreferences()
+            mgr.dnsSettings = nil
+            try await mgr.saveToPreferences()
+            log.info("Custom DNS disabled")
+        } catch {
+            log.error("Failed to disable DNS: \(String(describing: error), privacy: .public)")
+        }
+    }
+    func getCurrentDNS() async -> String {
+        await currentServers()
+    }
+
     func changeDNS(to dns: String) {
-        print("[DNSManager] Changing DNS to: \(dns)")
-        
-        NETunnelProviderManager.loadAllFromPreferences { managers, error in
-            if let error = error {
-                print("[DNSManager] Load error: \(error)")
-                return
-            }
-            
-            // Remove old tunnels
-            managers?.forEach { existingManager in
-                if existingManager.localizedDescription == "imjaDNS Tunnel" {
-                    existingManager.removeFromPreferences { error in
-                        if let error = error {
-                            print("[DNSManager] Failed to remove old tunnel: \(error)")
-                        } else {
-                            print("[DNSManager] Removed old tunnel.")
-                        }
-                    }
-                }
-            }
-            
-            // Create and configure new manager
-            let newManager = NETunnelProviderManager()
-            let proto = NETunnelProviderProtocol()
-            proto.providerBundleIdentifier = "dev.peterdsp.imjaDNS.DNSPacketTunnel"
-            proto.serverAddress = dns
-            proto.providerConfiguration = ["dns": dns]
-            proto.disconnectOnSleep = false
-            
-            newManager.localizedDescription = "imjaDNS Tunnel"
-            newManager.protocolConfiguration = proto
-            newManager.isEnabled = true
-            
-            newManager.saveToPreferences { error in
-                if let error = error {
-                    print("[DNSManager] Save error: \(error)")
-                    return
-                }
-                
-                // Important: Load again to sync internal state
-                newManager.loadFromPreferences { error in
-                    if let error = error {
-                        print("[DNSManager] Load after save error: \(error)")
-                        return
-                    }
-                    
-                    do {
-                        try newManager.connection.startVPNTunnel()
-                        print("[DNSManager] Successfully started tunnel for DNS: \(dns)")
-                    } catch {
-                        print("[DNSManager] Failed to start tunnel after save/load: \(error)")
-                    }
-                }
-            }
+        Task {
+            try? await setServers([dns])
+            UserDefaults.standard.set(dns, forKey: "lastUsedDNS")
         }
     }
 }
