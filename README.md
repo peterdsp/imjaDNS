@@ -2,7 +2,7 @@
 
 **imjaDNS** is a SwiftUI-based iOS application that allows users to view, manage, and apply custom DNS profiles system-wide using Apple's `NEDNSSettingsManager`. It loads default profiles from Firebase Remote Config and supports user-defined DNS servers with persistent storage.
 
-![imjaDNS](https://github.com/user-attachments/assets/b9cab808-71c1-4473-9e0c-6784cd732f22)
+![imjaDNS](https://github.com/user-attachments/assets/70d0a3c0-2f5d-4232-9735-47e852246f6c)
 
 ---
 
