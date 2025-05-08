@@ -12,7 +12,7 @@ struct DNSProfileFeature: Reducer {
     struct State: Equatable {
         var profiles: [DNSProfile] = []
         var customDNS: String = ""
-        var selectedProfileID: String? = nil
+        var selectedProfileID: UUID? = nil
         var isLoading: Bool = true
         var hasLoadedOnce: Bool = false
     }
@@ -34,7 +34,9 @@ struct DNSProfileFeature: Reducer {
             state.hasLoadedOnce = true
             return .run { send in
                 do {
-                    let profiles = try await FirebaseManager.shared.fetchProfiles()
+                    var profiles = try await FirebaseManager.shared.fetchProfiles()
+                    // Generate UUIDs since Firebase doesn’t provide them
+                    profiles = profiles.map { DNSProfile(id: UUID(), name: $0.name, servers: $0.servers) }
                     await send(.profilesLoaded(profiles))
                     await send(.setLoading(false))
                 } catch {
@@ -44,16 +46,11 @@ struct DNSProfileFeature: Reducer {
             }
 
         case let .profilesLoaded(profiles):
-            print("[DNSProfileFeature] Loaded profiles:")
-            for profile in profiles {
-                print("• \(profile.name) - ID: \(profile.id) - Servers: \(profile.servers.joined(separator: ", "))")
-            }
-
             state.profiles = profiles
             if let first = profiles.first {
                 state.selectedProfileID = first.id
                 return .run { _ in
-                    try? await DNSManager.shared.setServers(first.servers)
+                    try? await DNSManager.shared.setServers([first.servers])
                 }
             }
             return .none
@@ -61,7 +58,7 @@ struct DNSProfileFeature: Reducer {
         case let .selectProfile(profile):
             state.selectedProfileID = profile.id
             return .run { _ in
-                try? await DNSManager.shared.setServers(profile.servers)
+                try? await DNSManager.shared.setServers([profile.servers])
             }
 
         case let .updateCustomDNS(text):
@@ -72,20 +69,15 @@ struct DNSProfileFeature: Reducer {
             let trimmed = state.customDNS.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !trimmed.isEmpty else { return .none }
 
-            let parts = trimmed
-                .replacingOccurrences(of: ",", with: " ")
-                .split(separator: " ")
-                .map { String($0) }
-
             state.profiles.removeAll { $0.name == "Custom" }
 
-            let profile = DNSProfile(id: UUID().uuidString, name: "Custom", servers: parts)
+            let profile = DNSProfile(id: UUID(), name: "Custom", servers: trimmed)
             state.profiles.insert(profile, at: 0)
             state.customDNS = ""
             state.selectedProfileID = profile.id
 
             return .run { _ in
-                try? await DNSManager.shared.setServers(parts)
+                try? await DNSManager.shared.setServers([trimmed])
             }
 
         case let .setLoading(value):

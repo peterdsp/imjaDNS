@@ -17,13 +17,12 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         manager.delegate = self
         manager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
         manager.requestWhenInUseAuthorization()
-        // ⛔️ Do NOT start updating location here
     }
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         switch manager.authorizationStatus {
         case .authorizedWhenInUse, .authorizedAlways:
-            manager.startUpdatingLocation() // ✅ Start here when authorized
+            manager.startUpdatingLocation() 
 
         case .denied, .restricted: break
 
