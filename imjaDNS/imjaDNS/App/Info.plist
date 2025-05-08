@@ -4,5 +4,7 @@
 <dict>
 	<key>NSMobileNetworkUsageDescription</key>
 	<string>Used to determine the name of your cellular provider.</string>
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>This app changes the DNS servers used by your device.</string>
 </dict>
 </plist>

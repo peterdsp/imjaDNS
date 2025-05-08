@@ -14,25 +14,23 @@ struct SettingsView: View {
 
     var body: some View {
         Form {
-            Section(header: Text("Preferences")) {
-                Toggle("Auto-Apply DNS", isOn: $autoApplyDNS)
-
-                Button("Open System DNS Settings") {
-                    if let url = URL(string: "App-Prefs:root=General&path=Network") {
-                        UIApplication.shared.open(url)
-                    }
+            Section(header: Text("System DNS Setup")) {
+                Button("Open VPN & Device Management") {
+                    openDeviceManagementSettings()
                 }
+
+                Text("To activate DNS profiles, go to:\n\nSettings → General → VPN & Device Management → DNS\n\nThen select imjaDNS.")
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
             }
         }
         .navigationTitle("Settings")
     }
 
-    private func openSystemVPNSettings() {
-        // This opens the VPN settings pane on iOS
-        if let url = URL(string: "App-Prefs:root=General&path=VPN"), UIApplication.shared.canOpenURL(url) {
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        } else {
-            print("⚠️ Cannot open VPN settings. Ensure App-Prefs is allowed.")
+    private func openDeviceManagementSettings() {
+        if let url = URL(string: "App-Prefs:root=General&path=ManagedConfigurationList"),
+           UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url)
         }
     }
 }

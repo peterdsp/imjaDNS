@@ -8,14 +8,11 @@ import SwiftUI
 import ComposableArchitecture
 import Network
 import NetworkExtension
-import CoreLocation
-import CoreTelephony
-import SystemConfiguration.CaptiveNetwork
 
 struct HomeView: View {
     let store: StoreOf<HomeFeature>
-    @StateObject private var locationManager = LocationManager()
-
+    let profileStore: StoreOf<DNSProfileFeature>
+    
     var body: some View {
         NavigationStack {
             WithViewStore(store, observe: { $0 }) { viewStore in
@@ -47,23 +44,6 @@ struct HomeView: View {
                     .onAppear {
                         viewStore.send(.onAppear)
                         detectActiveNetwork(viewStore: viewStore)
-
-                        if CLLocationManager.authorizationStatus() == .denied || CLLocationManager.authorizationStatus() == .restricted {
-                            viewStore.send(.toggleLocationAlert(true))
-                        }
-                    }
-                    .alert("Location Required", isPresented: viewStore.binding(
-                        get: \.showLocationAlert,
-                        send: .toggleLocationAlert(false)
-                    )) {
-                        Button("Open Settings") {
-                            if let url = URL(string: UIApplication.openSettingsURLString) {
-                                UIApplication.shared.open(url)
-                            }
-                        }
-                        Button("Cancel", role: .cancel) {}
-                    } message: {
-                        Text("We need location access to detect your current Wi-Fi network.")
                     }
 
                     Button(action: {
@@ -77,11 +57,8 @@ struct HomeView: View {
                     .controlSize(.large)
 
                     NavigationLink(
-                        destination:
-                            DNSProfileView(
-                                store: Store(initialState: DNSProfileFeature.State()) {
-                                    DNSProfileFeature()
-                                }
+                        destination: DNSProfileView(
+                                store: profileStore
                             )
                     ) {
                         HStack {
@@ -104,6 +81,21 @@ struct HomeView: View {
                 }
                 .padding()
                 .navigationTitle("imjaDNS")
+                .alert(
+                    "Enable DNS Configuration",
+                    isPresented: viewStore.binding(
+                        get: { $0.showFirstTimeDNSAlert },
+                        send: { _ in .toggleDNSAlert(false) }
+                    )
+                ) {
+                    Button("Open Settings") {
+                        if let url = URL(string: "App-Prefs:root=General&path=ManagedConfigurationList/DNS") {
+                            UIApplication.shared.open(url)
+                        }
+                    }
+                } message: {
+                    Text("To activate DNS profiles, go to:\n\nSettings → General → VPN & Device Management → DNS\n\nThen select imjaDNS.")
+                }
             }
         }
     }
@@ -113,51 +105,16 @@ struct HomeView: View {
         monitor.pathUpdateHandler = { path in
             DispatchQueue.main.async {
                 if path.usesInterfaceType(.wifi) {
-                    let ssid = fetchSSID() ?? "Wi-Fi"
-                    viewStore.send(.updateNetworkName("Wi-Fi: \(ssid)"))
+                    viewStore.send(.updateNetworkName("Wi-Fi: Connected"))
                 } else if path.usesInterfaceType(.wiredEthernet) {
                     viewStore.send(.updateNetworkName("Ethernet: Connected"))
                 } else if path.usesInterfaceType(.cellular) {
-                    let carrier = getCarrierName() ?? "Cellular"
-                    viewStore.send(.updateNetworkName("Cellular: \(carrier)"))
+                    viewStore.send(.updateNetworkName("Cellular: Connected"))
                 } else {
                     viewStore.send(.updateNetworkName("No Connection"))
                 }
             }
         }
         monitor.start(queue: .global(qos: .background))
-    }
-
-    func fetchSSID() -> String? {
-        if let interfaces = CNCopySupportedInterfaces() as? [String] {
-            for interface in interfaces {
-                if let dict = CNCopyCurrentNetworkInfo(interface as CFString) as NSDictionary? {
-                    return dict[kCNNetworkInfoKeySSID as String] as? String
-                }
-            }
-        }
-        return nil
-    }
-
-    func getCarrierName() -> String? {
-        let networkInfo = CTTelephonyNetworkInfo()
-
-        if #available(iOS 12.0, *) {
-            guard let carriers = networkInfo.serviceSubscriberCellularProviders else {
-                return nil
-            }
-            for carrier in carriers.values {
-                if let name = carrier.carrierName {
-                    return name
-                }
-            }
-        } else {
-            if let carrier = networkInfo.subscriberCellularProvider,
-               let name = carrier.carrierName {
-                return name
-            }
-        }
-
-        return nil
     }
 }
