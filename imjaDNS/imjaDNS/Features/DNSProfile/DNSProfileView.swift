@@ -44,7 +44,7 @@ struct DNSProfileView: View {
                                             .foregroundColor(.white)
                                     }
 
-                                    Text("\(profile.name) DNS")
+                                    Text("\(profile.name)")
                                         .font(.headline)
 
                                     Text(profile.servers)
