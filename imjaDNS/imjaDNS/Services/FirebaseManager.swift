@@ -19,11 +19,9 @@ final class FirebaseManager {
     }
 
     func fetchProfiles() async throws -> [DNSProfile] {
-        print("[FirebaseManager] Fetching DNS profiles from Remote Config...")
 
         // Fetch and activate
         try await remoteConfig.fetchAndActivate()
-        print("[FirebaseManager] Remote Config activated")
 
         // Get the string value
         let jsonString = remoteConfig["dns_profiles"].stringValue
@@ -44,7 +42,6 @@ final class FirebaseManager {
 
         do {
             let wrapper = try JSONDecoder().decode(Wrapper.self, from: jsonData)
-            print("[FirebaseManager] Successfully decoded \(wrapper.profiles.count) profiles")
             return wrapper.profiles
         } catch {
             print("[FirebaseManager] JSON decode error: \(error)")

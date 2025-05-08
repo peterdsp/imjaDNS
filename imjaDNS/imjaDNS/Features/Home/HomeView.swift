@@ -49,7 +49,7 @@ struct HomeView: View {
                     Button(action: {
                         viewStore.send(.changeDNS)
                     }) {
-                        Text("Change DNS")
+                        Text("Default DNS")
                             .fontWeight(.semibold)
                             .frame(maxWidth: .infinity)
                     }
@@ -62,7 +62,7 @@ struct HomeView: View {
                             )
                     ) {
                         HStack {
-                            Text("Quick Profile")
+                            Text("Select Profile")
                                 .foregroundColor(.primary)
                             Spacer()
                             Image(systemName: "chevron.right")

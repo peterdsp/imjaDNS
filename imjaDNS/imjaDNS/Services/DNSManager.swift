@@ -34,8 +34,6 @@ final class DNSManager {
     }
 
     func setServers(_ servers: [String], matchDomains: [String] = [""]) async throws {
-        log.info("Setting DNS servers: \(servers, privacy: .public)")
-
         let mgr = NEDNSSettingsManager.shared()
         try await mgr.loadFromPreferences()
 
@@ -48,10 +46,7 @@ final class DNSManager {
 
         if let primary = servers.first {
             UserDefaults.standard.set(primary, forKey: "lastUsedDNS")
-            log.info("Saved primary DNS to UserDefaults: \(primary, privacy: .public)")
         }
-
-        log.info("✅ DNS successfully updated and saved.")
     }
 
     func disableCustomDNS() async {
@@ -60,7 +55,6 @@ final class DNSManager {
             try await mgr.loadFromPreferences()
             mgr.dnsSettings = nil
             try await mgr.saveToPreferences()
-            log.info("Custom DNS disabled")
         } catch {
             log.error("Failed to disable DNS: \(String(describing: error), privacy: .public)")
         }

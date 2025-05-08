@@ -51,7 +51,7 @@ struct HomeFeature: Reducer {
             return .none
             
         case .changeDNS:
-            let newDNS = "8.8.8.8"
+            let newDNS = "1.1.1.1"
             return .run { send in
                 try? await DNSManager.shared.setServers([newDNS])
                 await send(.updateCurrentDNS(newDNS))
