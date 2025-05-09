@@ -28,6 +28,18 @@ struct DNSProfileView: View {
                     if vs.isLoading {
                         ProgressView("Loading…")
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else if vs.profiles.isEmpty {
+                        VStack(spacing: 12) {
+                            Text("No DNS profiles loaded.")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+
+                            Button("Reload") {
+                                vs.send(.reloadProfiles)
+                            }
+                            .buttonStyle(.bordered)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else {
                         // MARK: - Carousel with Peeking Cards
                         TabView(selection: $selectedIndex) {
