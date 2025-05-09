@@ -24,6 +24,7 @@ struct DNSProfileFeature: Reducer {
         case updateCustomDNS(String)
         case addCustomDNS
         case setLoading(Bool)
+        case reloadProfiles
     }
 
     func reduce(into state: inout State, action: Action) -> Effect<Action> {
@@ -38,11 +39,17 @@ struct DNSProfileFeature: Reducer {
                     // Generate UUIDs since Firebase doesn’t provide them
                     profiles = profiles.map { DNSProfile(id: UUID(), name: $0.name, servers: $0.servers) }
                     await send(.profilesLoaded(profiles))
-                    await send(.setLoading(false))
                 } catch {
                     print("[DNSProfileFeature] Failed to fetch profiles: \(error)")
-                    await send(.setLoading(false))
+                    // Fallback profiles
+                    let localProfiles: [DNSProfile] = [
+                        DNSProfile(id: UUID(), name: "Cloudflare", servers: "1.1.1.1"),
+                        DNSProfile(id: UUID(), name: "Google DNS", servers: "8.8.8.8"),
+                        DNSProfile(id: UUID(), name: "AdGuard DNS", servers: "94.140.14.14")
+                    ]
+                    await send(.profilesLoaded(localProfiles))
                 }
+                await send(.setLoading(false))
             }
 
         case let .profilesLoaded(profiles):
@@ -83,6 +90,20 @@ struct DNSProfileFeature: Reducer {
         case let .setLoading(value):
             state.isLoading = value
             return .none
+            
+        case .reloadProfiles:
+            state.isLoading = true
+            return .run { send in
+                do {
+                    var profiles = try await FirebaseManager.shared.fetchProfiles()
+                    profiles = profiles.map { DNSProfile(id: UUID(), name: $0.name, servers: $0.servers) }
+                    await send(.profilesLoaded(profiles))
+                    await send(.setLoading(false))
+                } catch {
+                    print("[DNSProfileFeature] Reload failed: \(error)")
+                    await send(.setLoading(false))
+                }
+            }
         }
     }
 }
