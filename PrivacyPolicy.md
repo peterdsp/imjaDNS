@@ -15,7 +15,7 @@ We do not collect:
 - Location data
 - Any personally identifiable information (PII)
 
-If you have any questions, feel free to contact **Petros Dhespollari** at [your-email@example.com].
+If you have any questions, feel free to contact **Petros Dhespollari** at info@peterdsp.dev.
 
 ---
 
