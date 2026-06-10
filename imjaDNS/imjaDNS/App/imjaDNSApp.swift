@@ -1,60 +1,95 @@
-//
-//  imjaDNSApp.swift
-//  imjaDNS
-//
-//  Created by Petros Dhespollari on 30/04/2025.
-//
-
 import SwiftUI
 import ComposableArchitecture
-import Firebase
 import FirebaseCore
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-  func application(_ application: UIApplication,
-                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-    FirebaseApp.configure()
-
-    return true
-  }
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+    ) -> Bool {
+        FirebaseApp.configure()
+        FirebaseConfiguration.shared.setLoggerLevel(.min)
+        return true
+    }
 }
 
 @main
 struct imjaDNSApp: App {
-    let profileStore = Store(initialState: DNSProfileFeature.State()) {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+
+    @State private var hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+
+    private let homeStore = Store(initialState: HomeFeature.State()) {
+        HomeFeature()
+    }
+    private let profileStore = Store(initialState: DNSProfileFeature.State()) {
         DNSProfileFeature()
     }
-
-    init() {
-        FirebaseApp.configure()
-        FirebaseConfiguration.shared.setLoggerLevel(.min)
+    private let speedTestStore = Store(initialState: SpeedTestFeature.State()) {
+        SpeedTestFeature()
+    }
+    private let logStore = Store(initialState: ConnectionLogFeature.State()) {
+        ConnectionLogFeature()
+    }
+    private let settingsStore = Store(initialState: SettingsFeature.State()) {
+        SettingsFeature()
     }
 
     var body: some Scene {
         WindowGroup {
-            TabView {
-                NavigationStack {
-                    HomeView(
-                        store: Store(initialState: HomeFeature.State()) {
-                            HomeFeature()
-                        },
-                        profileStore: profileStore
-                    )
+            if hasCompletedOnboarding {
+                mainTabView
+            } else {
+                OnboardingView {
+                    UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+                    withAnimation(.easeInOut(duration: 0.5)) {
+                        hasCompletedOnboarding = true
+                    }
                 }
-                .tabItem {
-                    Label("Home", systemImage: "house")
-                }
+            }
+        }
+    }
 
-                NavigationStack {
-                    SettingsView()
-                }
-                .tabItem {
-                    Label("Settings", systemImage: "gearshape")
-                }
+    private var mainTabView: some View {
+        TabView {
+            NavigationStack {
+                HomeView(store: homeStore)
             }
-            .onAppear {
-                ViewStore(profileStore, observe: { $0 }).send(.onAppear)
+            .tabItem {
+                Label("Dashboard", systemImage: "shield.checkered")
             }
+
+            NavigationStack {
+                DNSProfileView(store: profileStore)
+            }
+            .tabItem {
+                Label("Profiles", systemImage: "list.bullet.rectangle.fill")
+            }
+
+            NavigationStack {
+                SpeedTestView(store: speedTestStore)
+            }
+            .tabItem {
+                Label("Speed Test", systemImage: "gauge.with.dots.needle.67percent")
+            }
+
+            NavigationStack {
+                ConnectionLogView(store: logStore)
+            }
+            .tabItem {
+                Label("Log", systemImage: "clock.fill")
+            }
+
+            NavigationStack {
+                SettingsView(store: settingsStore)
+            }
+            .tabItem {
+                Label("Settings", systemImage: "gearshape.fill")
+            }
+        }
+        .tint(Color(hex: "00D2FF"))
+        .onAppear {
+            profileStore.send(.onAppear)
         }
     }
 }
