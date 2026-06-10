@@ -2,9 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>NSMobileNetworkUsageDescription</key>
 	<string>Used to determine the name of your cellular provider.</string>
-    <key>NSLocalNetworkUsageDescription</key>
-    <string>This app changes the DNS servers used by your device.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>This app changes the DNS servers used by your device.</string>
 </dict>
 </plist>
