@@ -1,66 +1,127 @@
-//
-//  HomeFeature.swift
-//  imjaDNS
-//
-//  Created by Petros Dhespollari on 30/04/2025.
-//
-
 import ComposableArchitecture
 import Foundation
 
-struct HomeFeature: Reducer {
+@Reducer
+struct HomeFeature {
+    @ObservableState
     struct State: Equatable {
         var currentDNS: String = "Loading..."
-        var networkName: String = "..."
-        var showFirstTimeDNSAlert: Bool = false
+        var isCustomDNSActive: Bool = false
+        var networkType: String = "Checking..."
+        var networkIcon: String = "wifi"
+        var activeProfileName: String? = nil
+        var showFirstTimeAlert: Bool = false
+        var isApplying: Bool = false
+        var errorMessage: String? = nil
+        var latencyMs: Double? = nil
+        var isTestingLatency: Bool = false
     }
 
     enum Action: Equatable {
         case onAppear
-        case updateCurrentDNS(String)
-        case changeDNS
-        case updateNetworkName(String)
-        case toggleDNSAlert(Bool)
+        case refreshDNSStatus
+        case dnsStatusLoaded(String, Bool)
+        case networkUpdated(String, String)
+        case disconnectDNS
+        case dnsDisconnected
+        case showError(String)
+        case dismissError
+        case toggleFirstTimeAlert(Bool)
+        case latencyResult(Double?)
+        case testLatency
+        case setApplying(Bool)
     }
 
-    func reduce(into state: inout State, action: Action) -> Effect<Action> {
-        switch action {
-        case .onAppear:
-            return .run { send in
-                let dns = await DNSManager.shared.getCurrentDNS()
-                await send(.updateCurrentDNS(dns))
+    var body: some ReducerOf<Self> {
+        Reduce { state, action in
+            switch action {
+            case .onAppear:
+                return .run { send in
+                    let display = await DNSManager.shared.currentServersDisplay()
+                    let active = await DNSManager.shared.isCustomDNSActive()
+                    await send(.dnsStatusLoaded(display, active))
 
-                if !UserDefaults.standard.bool(forKey: UserDefaultsKeys.hasShownDNSAlert) {
-                    await send(.toggleDNSAlert(true))
-                    UserDefaults.standard.set(true, forKey: UserDefaultsKeys.hasShownDNSAlert)
+                    let hasShown = await PersistenceManager.shared.hasShownDNSAlert
+                    if !hasShown {
+                        await send(.toggleFirstTimeAlert(true))
+                        await PersistenceManager.shared.markDNSAlertShown()
+                    }
+
+                    if active {
+                        await send(.testLatency)
+                    }
                 }
 
-                if UserDefaults.standard.bool(forKey: UserDefaultsKeys.autoApplyDNS),
-                   let lastUsedDNS = UserDefaults.standard.string(forKey: UserDefaultsKeys.lastUsedDNS) {
-                    try? await DNSManager.shared.setServers([lastUsedDNS])
-                    await send(.updateCurrentDNS(lastUsedDNS))
+            case .refreshDNSStatus:
+                return .run { send in
+                    let display = await DNSManager.shared.currentServersDisplay()
+                    let active = await DNSManager.shared.isCustomDNSActive()
+                    await send(.dnsStatusLoaded(display, active))
                 }
-            }
 
-        case let .updateCurrentDNS(dns):
-            state.currentDNS = dns
-            return .none
-            
-        case let .toggleDNSAlert(value):
-            state.showFirstTimeDNSAlert = value
-            return .none
-            
-        case .changeDNS:
-            let newDNS = "1.1.1.1"
-            return .run { send in
-                try? await DNSManager.shared.setServers([newDNS])
-                await send(.updateCurrentDNS(newDNS))
-                UserDefaults.standard.set(newDNS, forKey: UserDefaultsKeys.lastUsedDNS)
-            }
+            case let .dnsStatusLoaded(dns, active):
+                state.currentDNS = dns
+                state.isCustomDNSActive = active
+                return .none
 
-        case let .updateNetworkName(name):
-            state.networkName = name
-            return .none
+            case let .networkUpdated(type, icon):
+                state.networkType = type
+                state.networkIcon = icon
+                return .none
+
+            case .disconnectDNS:
+                state.isApplying = true
+                return .run { send in
+                    do {
+                        try await DNSManager.shared.disableCustomDNS()
+                        await send(.dnsDisconnected)
+                    } catch {
+                        await send(.showError(error.localizedDescription))
+                    }
+                    await send(.setApplying(false))
+                }
+
+            case .dnsDisconnected:
+                state.currentDNS = "System Default"
+                state.isCustomDNSActive = false
+                state.activeProfileName = nil
+                state.latencyMs = nil
+                return .none
+
+            case let .showError(message):
+                state.errorMessage = message
+                state.isApplying = false
+                return .none
+
+            case .dismissError:
+                state.errorMessage = nil
+                return .none
+
+            case let .toggleFirstTimeAlert(show):
+                state.showFirstTimeAlert = show
+                return .none
+
+            case .testLatency:
+                state.isTestingLatency = true
+                return .run { [dns = state.currentDNS] send in
+                    let servers = dns.components(separatedBy: ", ")
+                    if let server = servers.first {
+                        let latency = await DNSManager.shared.testLatency(server: server)
+                        await send(.latencyResult(latency))
+                    } else {
+                        await send(.latencyResult(nil))
+                    }
+                }
+
+            case let .latencyResult(ms):
+                state.latencyMs = ms
+                state.isTestingLatency = false
+                return .none
+
+            case let .setApplying(value):
+                state.isApplying = value
+                return .none
+            }
         }
     }
 }
