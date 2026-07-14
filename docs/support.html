@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Support — imjaDNS</title>
+  <meta name="description" content="Get help with imjaDNS. Setup guide, FAQ, and contact for the premium iOS DNS management app." />
+  <meta name="theme-color" content="#070B16" />
+  <link rel="icon" href="assets/icon.png" type="image/png" />
+  <link rel="apple-touch-icon" href="assets/icon-180.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="mesh" aria-hidden="true">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+  </div>
+
+  <header class="nav">
+    <div class="wrap">
+      <a class="brand" href="index.html"><img src="assets/icon.png" alt="imjaDNS icon" /> imjaDNS</a>
+      <nav class="nav-links">
+        <a href="index.html#features">Features</a>
+        <a href="index.html#providers">Providers</a>
+        <a href="privacy.html">Privacy</a>
+        <a class="cta" href="index.html">Home</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="wrap">
+      <article class="glass doc">
+        <h1>Support</h1>
+        <div class="updated">We're here to help.</div>
+
+        <p>Need a hand with imjaDNS? Reach out any time at <a href="mailto:info@peterdsp.dev">info@peterdsp.dev</a> and we'll get back to you.</p>
+
+        <h2>Getting started</h2>
+        <ul>
+          <li>Open imjaDNS and complete the short onboarding walkthrough.</li>
+          <li>Browse providers by category (Privacy, Speed, Family Safe, Security, Gaming).</li>
+          <li>Tap a profile and choose <strong>Apply</strong> to activate it system-wide — no VPN required.</li>
+          <li>Confirm the DNS configuration when iOS prompts you in Settings.</li>
+        </ul>
+
+        <h2>Frequently asked questions</h2>
+
+        <h2 style="font-size:18px">Does imjaDNS use a VPN?</h2>
+        <p>No. imjaDNS applies DNS settings directly through Apple's <code>NEDNSSettingsManager</code>, so your traffic isn't routed through any tunnel or third-party server.</p>
+
+        <h2 style="font-size:18px">Are my DNS lookups encrypted?</h2>
+        <p>Yes — every supported provider uses DNS over HTTPS (DoH) or DNS over TLS (DoT), so your queries stay private.</p>
+
+        <h2 style="font-size:18px">Can I add my own DNS server?</h2>
+        <p>Absolutely. Create a custom profile with your own IPv4, IPv6, DoH URL, or DoT hostname. The app validates each field before saving.</p>
+
+        <h2 style="font-size:18px">Do you collect any of my data?</h2>
+        <p>Never. imjaDNS performs no analytics, tracking, or logging. See our <a href="privacy.html">Privacy Policy</a> for details.</p>
+
+        <h2 style="font-size:18px">How do I remove a DNS profile?</h2>
+        <p>Open the active profile in the app and tap <strong>Remove</strong>, or delete the imjaDNS configuration under <em>Settings → General → VPN &amp; Device Management → DNS</em>.</p>
+
+        <hr class="divider" />
+        <h2>Still need help?</h2>
+        <p>Email <strong>Petros Dhespollari</strong> at <a href="mailto:info@peterdsp.dev">info@peterdsp.dev</a> or open an issue on <a href="https://github.com/peterdsp/imjaDNS">GitHub</a>.</p>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <a class="brand" href="index.html"><img src="assets/icon.png" alt="" style="width:28px;height:28px;border-radius:7px" /> imjaDNS</a>
+      <nav>
+        <a href="index.html#features">Features</a>
+        <a href="support.html">Support</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="https://github.com/peterdsp/imjaDNS">GitHub</a>
+      </nav>
+      <div class="copy">© 2026 Petros Dhespollari · imjaDNS · <a href="mailto:info@peterdsp.dev" style="color:var(--text-faint)">info@peterdsp.dev</a></div>
+    </div>
+  </footer>
+</body>
+</html>
