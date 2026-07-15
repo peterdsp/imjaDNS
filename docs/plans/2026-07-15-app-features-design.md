@@ -1,8 +1,21 @@
 # imjaDNS — Next Features Design
 
 **Date:** 2026-07-15
-**Status:** Proposed
+**Status:** Implemented (see status below)
 **Scope:** Four feature tracks — App Intents/Shortcuts, Widgets, Per-Wi-Fi automation, Latency analytics — plus one shared prerequisite.
+
+## Implementation status
+
+- ✅ **Foundation 0** — App Group persistence + migration (`756228c`)
+- ✅ **Feature 1** — App Intents, Shortcuts, Siri; Control Center toggle staged (`756228c`)
+- ✅ **Feature 2** — Widget app-side state live; widget UI staged in `imjaDNS/WidgetExtension/` (`625a4c1`)
+- ✅ **Feature 4** — Latency Insights: charts, leaderboard, fastest-now (`e8ed4a7`)
+- ✅ **Feature 3** — Automation: any-Wi-Fi / cellular / schedule live; SSID rules wired, gated on entitlements (`c386f79`)
+
+**Manual steps remaining (require Xcode / provisioning, can't be scripted):**
+1. Create the **Widget Extension** target and move in the staged files (see `imjaDNS/WidgetExtension/README.md`) — activates the Home/Lock Screen widget and Control Center toggle.
+2. Add **Access WiFi Information** capability + `NSLocationWhenInUseUsageDescription` to enable SSID-based automation rules.
+3. (Optional) Register a **BGAppRefreshTask** for background schedule application.
 
 ---
 
