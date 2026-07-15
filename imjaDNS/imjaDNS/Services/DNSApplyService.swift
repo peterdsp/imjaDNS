@@ -36,6 +36,14 @@ enum DNSApplyService {
             servers: profile.servers,
             action: .applied
         ))
+        WidgetStateStore.save(WidgetState(
+            isActive: true,
+            profileName: profile.name,
+            categoryIcon: profile.category.icon,
+            gradient: profile.category.gradient,
+            latencyMs: nil,
+            updatedAt: Date()
+        ))
         reloadWidgets()
     }
 
@@ -50,6 +58,14 @@ enum DNSApplyService {
             profileName: "System Default",
             servers: [],
             action: .removed
+        ))
+        WidgetStateStore.save(WidgetState(
+            isActive: false,
+            profileName: WidgetState.systemDefault.profileName,
+            categoryIcon: WidgetState.systemDefault.categoryIcon,
+            gradient: WidgetState.systemDefault.gradient,
+            latencyMs: nil,
+            updatedAt: Date()
         ))
         reloadWidgets()
     }

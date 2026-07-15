@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import Foundation
+import WidgetKit
 
 @Reducer
 struct HomeFeature {
@@ -116,7 +117,10 @@ struct HomeFeature {
             case let .latencyResult(ms):
                 state.latencyMs = ms
                 state.isTestingLatency = false
-                return .none
+                return .run { _ in
+                    WidgetStateStore.updateLatency(ms)
+                    WidgetCenter.shared.reloadAllTimelines()
+                }
 
             case let .setApplying(value):
                 state.isApplying = value

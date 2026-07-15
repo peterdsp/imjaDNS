@@ -22,6 +22,16 @@ enum ProfileProvider {
         return await profile(for: id)
     }
 
+    /// Favorited profiles, falling back to the first few built-ins so the
+    /// widget's quick-switch always has something to show.
+    static func favorites(limit: Int = 3) async -> [DNSProfile] {
+        let ids = await PersistenceManager.shared.loadFavoriteIDs()
+        let all = await allProfiles()
+        let favorites = all.filter { ids.contains($0.id) }
+        let chosen = favorites.isEmpty ? all : favorites
+        return Array(chosen.prefix(limit))
+    }
+
     /// Best guess of what to re-enable from a toggle: the last applied profile,
     /// then the active one, then the first available profile.
     static func profileToEnable() async -> DNSProfile? {
