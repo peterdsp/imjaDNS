@@ -84,6 +84,12 @@ body {
 .nav-links a:hover { color: var(--text); }
 .nav-links a.cta { color: var(--text); }
 
+/* ---------- Language switcher ---------- */
+.lang-switch { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); }
+.lang-switch a { font-size: 12px; font-weight: 600; letter-spacing: 0.02em; padding: 4px 9px; border-radius: 999px; color: var(--text-dim); text-decoration: none; transition: color .2s, background .2s; }
+.lang-switch a:hover { color: var(--text); }
+.lang-switch a.active { background: var(--grad); color: #fff; }
+
 /* ---------- Buttons ---------- */
 .btn {
   display: inline-flex; align-items: center; gap: 9px;
@@ -214,8 +220,10 @@ html.js .reveal:not(.in) { opacity: 0; transform: translateY(24px); }
   .stats { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 620px) {
-  .nav-links { gap: 16px; }
-  .nav-links a:not(.cta) { display: none; }
+  .nav-links { gap: 12px; }
+  .nav-links > a:not(.cta) { display: none; }
+  .lang-switch { display: inline-flex; }
+  .lang-switch a { display: inline-block; }
   .grid.cols-3, .grid.cols-2, .cats, .stats { grid-template-columns: 1fr; }
   .hero { padding: 60px 0 50px; }
   .doc { padding: 28px 22px; }
