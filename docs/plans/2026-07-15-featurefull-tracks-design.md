@@ -1,8 +1,21 @@
 # imjaDNS — "Feature-full" Tracks Design
 
 **Date:** 2026-07-15
-**Status:** Proposed
+**Status:** Implemented
 **Scope:** Four new tracks beyond the shipped roadmap — Diagnostics & Trust, Sharing & Sync, App Localization, Apple Watch companion.
+
+## Implementation status
+
+- ✅ **Track A — Diagnostics** (encryption, reachability, DNSSEC) — `2a601e9`
+- ✅ **Track B — Sharing & Sync** (iCloud KVS, export/import, QR) — `4f1b886`
+- ✅ **Track C — App Localization** (Greek + Albanian String Catalog) — `29ba2ae`
+- ✅ **Track D — Apple Watch** (phone side live; watch app staged) — `fd28dcd`
+
+**Manual Xcode / capability steps remaining:**
+1. **Camera** capability + `NSCameraUsageDescription` — for the QR scanner (Track B).
+2. **iCloud Key-Value Storage** capability — for iCloud sync (Track B; no-op without it).
+3. Create the **watchOS target** and move in the staged `WatchApp/` files (Track D).
+4. (From the first roadmap) create the **Widget Extension** target; add **Access WiFi Information** for SSID rules.
 
 ---
 
