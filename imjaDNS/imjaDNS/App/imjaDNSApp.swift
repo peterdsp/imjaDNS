@@ -40,6 +40,9 @@ struct imjaDNSApp: App {
     private let automationStore = Store(initialState: AutomationFeature.State()) {
         AutomationFeature()
     }
+    private let diagnosticsStore = Store(initialState: DiagnosticsFeature.State()) {
+        DiagnosticsFeature()
+    }
 
     var body: some Scene {
         WindowGroup {
@@ -60,6 +63,15 @@ struct imjaDNSApp: App {
         TabView {
             NavigationStack {
                 HomeView(store: homeStore)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            NavigationLink {
+                                DiagnosticsView(store: diagnosticsStore)
+                            } label: {
+                                Image(systemName: "stethoscope")
+                            }
+                        }
+                    }
             }
             .tabItem {
                 Label("Dashboard", systemImage: "shield.checkered")

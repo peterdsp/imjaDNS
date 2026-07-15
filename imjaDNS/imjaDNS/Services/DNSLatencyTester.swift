@@ -137,7 +137,23 @@ enum DNSLatencyTester {
     // MARK: - UDP transport
 
     private static func measureUDP(server: String, timeout: TimeInterval) async -> Double? {
-        let query = buildQuery(domain: probeDomain, id: UInt16.random(in: 0...UInt16.max))
+        await queryUDP(server: server, domain: probeDomain, timeout: timeout)?.rtt
+    }
+
+    /// Parsed result of a DNS query — used by diagnostics (RCODE, answer count)
+    /// as well as latency.
+    struct DNSResponse: Sendable {
+        let rtt: Double
+        let rcode: Int          // 0 = NOERROR, 2 = SERVFAIL, 3 = NXDOMAIN
+        let answerCount: Int
+    }
+
+    /// Sends a UDP `A` query for `domain` to `server` and returns the parsed
+    /// response header (or nil on timeout / no valid reply). Reuses the safe
+    /// connection plumbing.
+    static func queryUDP(server: String, domain: String, timeout: TimeInterval = 4) async -> DNSResponse? {
+        guard DNSValidation.isValidDNSServer(server) else { return nil }
+        let query = buildQuery(domain: domain, id: UInt16.random(in: 0...UInt16.max))
         return await withConnection(
             server: server,
             port: 53,
@@ -148,10 +164,10 @@ enum DNSLatencyTester {
             connection.send(content: query, completion: .contentProcessed { error in
                 if error != nil { finish(nil); return }
                 connection.receiveMessage { data, _, _, recvError in
-                    if recvError != nil || data == nil || !isValidDNSResponse(data!) {
-                        finish(nil)
+                    if recvError == nil, let data, let response = parseResponse(data, rtt: elapsedMs(since: start)) {
+                        finish(response)
                     } else {
-                        finish(elapsedMs(since: start))
+                        finish(nil)
                     }
                 }
             })
@@ -218,19 +234,19 @@ enum DNSLatencyTester {
     /// Opens an `NWConnection`, runs `work` once it reaches `.ready`, and
     /// guarantees the returned continuation resolves exactly once (on success,
     /// failure, or timeout) while always tearing the connection down.
-    private static func withConnection(
+    private static func withConnection<T: Sendable>(
         server: String,
         port: UInt16,
         parameters: NWParameters,
         timeout: TimeInterval,
-        work: @escaping @Sendable (NWConnection, @escaping @Sendable (Double?) -> Void) -> Void
-    ) async -> Double? {
+        work: @escaping @Sendable (NWConnection, @escaping @Sendable (T?) -> Void) -> Void
+    ) async -> T? {
         guard let nwPort = NWEndpoint.Port(rawValue: port) else { return nil }
         let host = NWEndpoint.Host(server)
         let connection = NWConnection(host: host, port: nwPort, using: parameters)
 
-        return await withCheckedContinuation { (continuation: CheckedContinuation<Double?, Never>) in
-            let completion = ProbeCompletion(connection: connection, continuation: continuation)
+        return await withCheckedContinuation { (continuation: CheckedContinuation<T?, Never>) in
+            let completion = ProbeCompletion<T>(connection: connection, continuation: continuation)
 
             let timeoutItem = DispatchWorkItem { completion.finish(nil) }
             completion.setTimeoutItem(timeoutItem)
@@ -255,14 +271,14 @@ enum DNSLatencyTester {
     /// mutable state is lock-guarded, so it's safe to share across the Network
     /// framework's concurrent callbacks (`@unchecked Sendable` is the standard
     /// wrapper for a manually-synchronized continuation).
-    private final class ProbeCompletion: @unchecked Sendable {
+    private final class ProbeCompletion<T: Sendable>: @unchecked Sendable {
         private let lock = NSLock()
         private var resolved = false
         private var timeoutItem: DispatchWorkItem?
         private let connection: NWConnection
-        private let continuation: CheckedContinuation<Double?, Never>
+        private let continuation: CheckedContinuation<T?, Never>
 
-        init(connection: NWConnection, continuation: CheckedContinuation<Double?, Never>) {
+        init(connection: NWConnection, continuation: CheckedContinuation<T?, Never>) {
             self.connection = connection
             self.continuation = continuation
         }
@@ -271,7 +287,7 @@ enum DNSLatencyTester {
             lock.lock(); timeoutItem = item; lock.unlock()
         }
 
-        func finish(_ value: Double?) {
+        func finish(_ value: T?) {
             lock.lock()
             if resolved { lock.unlock(); return }
             resolved = true
@@ -317,6 +333,17 @@ enum DNSLatencyTester {
         guard data.count >= 12 else { return false }
         let flagsHigh = data[data.startIndex + 2]
         return (flagsHigh & 0x80) != 0 // QR = 1 (response)
+    }
+
+    /// Parses a DNS response header into an RTT-stamped result, or nil if the
+    /// bytes aren't a valid response (QR bit unset / too short).
+    static func parseResponse(_ data: Data, rtt: Double) -> DNSResponse? {
+        guard data.count >= 12 else { return nil }
+        let base = data.startIndex
+        guard (data[base + 2] & 0x80) != 0 else { return nil }   // QR must be set
+        let rcode = Int(data[base + 3] & 0x0F)
+        let answerCount = Int(data[base + 6]) << 8 | Int(data[base + 7])
+        return DNSResponse(rtt: rtt, rcode: rcode, answerCount: answerCount)
     }
 
     private static func elapsedMs(since start: DispatchTime) -> Double {
