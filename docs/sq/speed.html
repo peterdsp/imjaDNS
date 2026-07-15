@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test Shpejtësie — imjaDNS</title>
+  <meta name="description" content="Testo shpejtësinë reale të internetit tënd — shkarkim, ngarkim, ping dhe jitter — pastaj shiko si përballon streaming, Netflix 4K, IPTV, cloud gaming, kamera sigurie dhe një shtëpi të mençur të plotë." />
+  <meta name="theme-color" content="#070B16" />
+  <link rel="icon" href="../assets/icon.png" type="image/png" />
+  <link rel="apple-touch-icon" href="../assets/icon-180.png" />
+  <link rel="alternate" hreflang="en" href="https://imjadns.peterdsp.dev/speed.html" />
+  <link rel="alternate" hreflang="el" href="https://imjadns.peterdsp.dev/el/speed.html" />
+  <link rel="alternate" hreflang="sq" href="https://imjadns.peterdsp.dev/sq/speed.html" />
+  <link rel="alternate" hreflang="x-default" href="https://imjadns.peterdsp.dev/speed.html" />
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+  <div class="mesh" aria-hidden="true">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+  </div>
+
+  <header class="nav">
+    <div class="wrap">
+      <a class="brand" href="index.html"><img src="../assets/icon.png" alt="Ikona e imjaDNS" /> imjaDNS</a>
+      <nav class="nav-links">
+        <a href="index.html#features">Veçoritë</a>
+        <a href="index.html#providers">Ofruesit</a>
+        <a href="speed.html" class="cta">Shpejtësia</a>
+        <a href="support.html">Mbështetja</a>
+        <span class="lang-switch" role="group" aria-label="Gjuha">
+          <a href="../speed.html" hreflang="en" lang="en">EN</a>
+          <a href="../el/speed.html" hreflang="el" lang="el">ΕΛ</a>
+          <a href="speed.html" class="active" hreflang="sq" lang="sq">SQ</a>
+        </span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="speed">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <h2 data-i18n="title">Testo lidhjen tënde</h2>
+          <p data-i18n="subtitle">Mat shpejtësinë tënde reale, pastaj shiko si përballon streaming, gaming, kamera dhe një shtëpi të mençur të plotë.</p>
+        </div>
+
+        <div class="glass speed-panel reveal">
+          <div class="speed-stage">
+            <div class="speed-ring" id="ring">
+              <div class="speed-center">
+                <div class="speed-live" id="live">–</div>
+                <div class="speed-unit">Mbps</div>
+                <div class="speed-phase" id="phase" data-i18n="ready">Gati</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="metrics">
+            <div class="metric"><div class="mval" id="m-down">–</div><div class="mlbl" data-i18n="download">Shkarkim</div></div>
+            <div class="metric"><div class="mval" id="m-up">–</div><div class="mlbl" data-i18n="upload">Ngarkim</div></div>
+            <div class="metric"><div class="mval" id="m-ping">–</div><div class="mlbl" data-i18n="ping">Ping</div></div>
+            <div class="metric"><div class="mval" id="m-jit">–</div><div class="mlbl" data-i18n="jitter">Jitter</div></div>
+          </div>
+
+          <button class="btn btn-primary" id="startBtn" data-i18n="start">Nis testin</button>
+          <div class="speed-meta" id="meta"></div>
+        </div>
+
+        <div class="scenarios" id="scenarios"></div>
+        <p class="speed-disclaimer" data-i18n="disclaimer">Udhëzim, jo garanci — performanca reale varet nga pajisjet, Wi-Fi dhe shërbimi yt. Vetëm të dhëna testimi të përkohshme dalin nga shfletuesi; imjaDNS nuk ruan asgjë.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <a class="brand" href="index.html"><img src="../assets/icon.png" alt="" style="width:28px;height:28px;border-radius:7px" /> imjaDNS</a>
+      <nav>
+        <a href="index.html#features">Veçoritë</a>
+        <a href="speed.html">Shpejtësia</a>
+        <a href="support.html">Mbështetja</a>
+        <a href="privacy.html">Privatësia</a>
+        <a href="https://github.com/peterdsp/imjaDNS">GitHub</a>
+      </nav>
+      <div class="copy">© 2025–2026 Petros Dhespollari · imjaDNS · <a href="mailto:info@peterdsp.dev" style="color:var(--text-faint)">info@peterdsp.dev</a></div>
+    </div>
+  </footer>
+
+  <script>
+    document.documentElement.classList.add('js');
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+  </script>
+  <script src="../speedtest.js"></script>
+</body>
+</html>
