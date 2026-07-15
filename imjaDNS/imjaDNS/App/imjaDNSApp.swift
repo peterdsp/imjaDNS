@@ -140,6 +140,7 @@ struct imjaDNSApp: App {
             profileStore.send(.onAppear)
             AutomationEngine.shared.start()
             CloudSyncManager.shared.start()
+            PhoneConnectivityManager.shared.start()
         }
     }
 }

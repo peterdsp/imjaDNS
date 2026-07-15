@@ -78,5 +78,6 @@ enum DNSApplyService {
 
     private static func reloadWidgets() {
         WidgetCenter.shared.reloadAllTimelines()
+        Task { await PhoneConnectivityManager.shared.syncStateToWatch() }
     }
 }
