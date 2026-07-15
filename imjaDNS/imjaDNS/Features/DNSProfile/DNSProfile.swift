@@ -47,7 +47,7 @@ enum DNSProtocolType: String, Codable, CaseIterable {
     }
 }
 
-struct DNSProfile: Identifiable, Codable, Equatable {
+struct DNSProfile: Identifiable, Codable, Equatable, Sendable {
     let id: UUID
     var name: String
     var servers: [String]

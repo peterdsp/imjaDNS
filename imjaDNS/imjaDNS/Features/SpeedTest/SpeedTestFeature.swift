@@ -45,8 +45,8 @@ struct SpeedTestFeature {
                 state.totalTests = state.profiles.count
                 let profiles = state.profiles
                 return .run { send in
-                    for profile in profiles {
-                        let latency = await DNSManager.shared.testProfileLatency(profile)
+                    let timeout = await SpeedProbe.adaptiveTimeout()
+                    await SpeedProbe.probeConcurrently(profiles, timeout: timeout) { profile, latency in
                         await send(.testResult(profile.id, profile.name, profile.primaryServer, latency))
                     }
                     await send(.testComplete)

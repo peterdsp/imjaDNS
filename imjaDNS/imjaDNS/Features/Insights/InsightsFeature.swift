@@ -63,14 +63,11 @@ struct InsightsFeature {
             case .refreshFastest:
                 state.isRefreshing = true
                 return .run { send in
-                    var best: State.FastestResult?
-                    for profile in DNSProfileCatalog.builtIn {
-                        guard let ms = await DNSManager.shared.testProfileLatency(profile) else { continue }
-                        if best == nil || ms < best!.latencyMs {
-                            best = State.FastestResult(profile: profile, latencyMs: ms)
-                        }
-                    }
-                    await send(.fastestLoaded(best))
+                    let timeout = await SpeedProbe.adaptiveTimeout()
+                    let best = await SpeedProbe.fastest(among: DNSProfileCatalog.builtIn, timeout: timeout)
+                    await send(.fastestLoaded(best.map {
+                        State.FastestResult(profile: $0.profile, latencyMs: $0.latencyMs)
+                    }))
                 }
 
             case let .fastestLoaded(result):

@@ -65,18 +65,12 @@ struct RunSpeedTestIntent: AppIntent {
 
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog & ReturnsValue<String> {
-        var best: (name: String, ms: Double)?
-        for profile in ProfileProvider.builtIn {
-            guard let ms = await DNSManager.shared.testProfileLatency(profile) else { continue }
-            if best == nil || ms < best!.ms {
-                best = (profile.name, ms)
-            }
-        }
-        guard let best else {
+        let timeout = SpeedProbe.adaptiveTimeout()
+        guard let best = await SpeedProbe.fastest(among: ProfileProvider.builtIn, timeout: timeout) else {
             return .result(value: "No response", dialog: "Couldn't reach any DNS provider.")
         }
-        let rounded = Int(best.ms.rounded())
-        return .result(value: best.name, dialog: "Fastest provider: \(best.name) at \(rounded) ms.")
+        let rounded = Int(best.latencyMs.rounded())
+        return .result(value: best.profile.name, dialog: "Fastest provider: \(best.profile.name) at \(rounded) ms.")
     }
 }
 

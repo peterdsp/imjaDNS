@@ -107,7 +107,8 @@ struct HomeFeature {
                 return .run { [dns = state.currentDNS] send in
                     let servers = dns.components(separatedBy: ", ")
                     if let server = servers.first {
-                        let latency = await DNSManager.shared.testLatency(server: server)
+                        let timeout = await SpeedProbe.adaptiveTimeout()
+                        let latency = await DNSManager.shared.testLatency(server: server, timeout: timeout)
                         await send(.latencyResult(latency))
                     } else {
                         await send(.latencyResult(nil))
