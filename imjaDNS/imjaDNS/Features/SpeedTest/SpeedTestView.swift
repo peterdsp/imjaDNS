@@ -52,7 +52,7 @@ struct SpeedTestView: View {
         Button {
             store.send(.startInternetTest)
         } label: {
-            Text(internetButtonTitle)
+            Text(LocalizedStringKey(internetButtonTitle))
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 6)
         }
@@ -93,7 +93,7 @@ struct SpeedTestView: View {
                         .font(.system(size: 52, weight: .bold, design: .rounded))
                         .monospacedDigit()
                     Text("Mbps").font(.caption).foregroundStyle(.secondary)
-                    Text(phaseLabel)
+                    Text(LocalizedStringKey(phaseLabel))
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(Color(hex: "00D2FF"))
                         .textCase(.uppercase)
@@ -105,7 +105,7 @@ struct SpeedTestView: View {
         .padding(.vertical, 8)
     }
 
-    private func internetMetric(_ value: String, _ label: String) -> some View {
+    private func internetMetric(_ value: String, _ label: LocalizedStringKey) -> some View {
         GlassCard {
             VStack(spacing: 4) {
                 Text(value).font(.title3.weight(.bold).monospacedDigit())
@@ -123,11 +123,11 @@ struct SpeedTestView: View {
                     .foregroundStyle(ratingColor(s.rating))
                     .frame(width: 28)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(s.name).font(.subheadline.weight(.semibold))
-                    Text(s.detail).font(.caption).foregroundStyle(.secondary)
+                    Text(LocalizedStringKey(s.name)).font(.subheadline.weight(.semibold))
+                    Text(LocalizedStringKey(s.detail)).font(.caption).foregroundStyle(.secondary)
                 }
                 Spacer()
-                Text(ratingLabel(s.rating))
+                Text(LocalizedStringKey(ratingLabel(s.rating)))
                     .font(.caption.weight(.bold))
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)

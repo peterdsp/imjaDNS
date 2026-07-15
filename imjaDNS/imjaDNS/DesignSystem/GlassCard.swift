@@ -208,10 +208,10 @@ struct LatencyBadge: View {
 }
 
 struct SectionHeader: View {
-    let title: String
+    let title: LocalizedStringKey
     let icon: String?
 
-    init(_ title: String, icon: String? = nil) {
+    init(_ title: LocalizedStringKey, icon: String? = nil) {
         self.title = title
         self.icon = icon
     }
