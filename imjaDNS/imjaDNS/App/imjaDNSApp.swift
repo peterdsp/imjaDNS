@@ -43,6 +43,9 @@ struct imjaDNSApp: App {
     private let diagnosticsStore = Store(initialState: DiagnosticsFeature.State()) {
         DiagnosticsFeature()
     }
+    private let shareSyncStore = Store(initialState: ShareSyncFeature.State()) {
+        ShareSyncFeature()
+    }
 
     var body: some Scene {
         WindowGroup {
@@ -79,6 +82,15 @@ struct imjaDNSApp: App {
 
             NavigationStack {
                 DNSProfileView(store: profileStore)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            NavigationLink {
+                                ShareSyncView(store: shareSyncStore)
+                            } label: {
+                                Image(systemName: "square.and.arrow.up")
+                            }
+                        }
+                    }
             }
             .tabItem {
                 Label("Profiles", systemImage: "list.bullet.rectangle.fill")
@@ -127,6 +139,7 @@ struct imjaDNSApp: App {
         .onAppear {
             profileStore.send(.onAppear)
             AutomationEngine.shared.start()
+            CloudSyncManager.shared.start()
         }
     }
 }
