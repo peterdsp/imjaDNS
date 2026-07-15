@@ -14,5 +14,9 @@
 	<string>Used to determine the name of your cellular provider.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>This app changes the DNS servers used by your device.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Used to scan a QR code to import a DNS profile.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Used to detect your current Wi-Fi network so automation rules can apply the right DNS.</string>
 </dict>
 </plist>
