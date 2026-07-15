@@ -168,10 +168,11 @@ enum DNSLatencyTester {
     ) async -> Double? {
         let query = buildQuery(domain: probeDomain, id: UInt16.random(in: 0...UInt16.max))
         // DNS over TCP/TLS prefixes the message with a 2-byte length.
-        var framed = Data()
-        framed.append(UInt8((query.count >> 8) & 0xFF))
-        framed.append(UInt8(query.count & 0xFF))
-        framed.append(query)
+        var framedBytes = Data()
+        framedBytes.append(UInt8((query.count >> 8) & 0xFF))
+        framedBytes.append(UInt8(query.count & 0xFF))
+        framedBytes.append(query)
+        let framed = framedBytes
 
         let parameters: NWParameters
         if useTLS {
@@ -222,33 +223,25 @@ enum DNSLatencyTester {
         port: UInt16,
         parameters: NWParameters,
         timeout: TimeInterval,
-        work: @escaping (NWConnection, @escaping (Double?) -> Void) -> Void
+        work: @escaping @Sendable (NWConnection, @escaping @Sendable (Double?) -> Void) -> Void
     ) async -> Double? {
         guard let nwPort = NWEndpoint.Port(rawValue: port) else { return nil }
         let host = NWEndpoint.Host(server)
         let connection = NWConnection(host: host, port: nwPort, using: parameters)
-        let box = ResultBox()
 
         return await withCheckedContinuation { (continuation: CheckedContinuation<Double?, Never>) in
-            let finish: (Double?) -> Void = { value in
-                guard box.resolve() else { return }
-                connection.cancel()
-                continuation.resume(returning: value)
-            }
+            let completion = ProbeCompletion(connection: connection, continuation: continuation)
 
-            let timeoutItem = DispatchWorkItem { finish(nil) }
+            let timeoutItem = DispatchWorkItem { completion.finish(nil) }
+            completion.setTimeoutItem(timeoutItem)
             DispatchQueue.global().asyncAfter(deadline: .now() + timeout, execute: timeoutItem)
 
             connection.stateUpdateHandler = { state in
                 switch state {
                 case .ready:
-                    work(connection) { value in
-                        timeoutItem.cancel()
-                        finish(value)
-                    }
+                    work(connection) { value in completion.finish(value) }
                 case .failed, .cancelled:
-                    timeoutItem.cancel()
-                    finish(nil)
+                    completion.finish(nil)
                 default:
                     break
                 }
@@ -257,15 +250,38 @@ enum DNSLatencyTester {
         }
     }
 
-    /// Thread-safe one-shot guard so a continuation never resumes twice.
-    private final class ResultBox {
+    /// Owns the one-shot resume path: guarantees the continuation resumes exactly
+    /// once, cancels the pending timeout, and tears down the connection. All
+    /// mutable state is lock-guarded, so it's safe to share across the Network
+    /// framework's concurrent callbacks (`@unchecked Sendable` is the standard
+    /// wrapper for a manually-synchronized continuation).
+    private final class ProbeCompletion: @unchecked Sendable {
         private let lock = NSLock()
         private var resolved = false
-        func resolve() -> Bool {
-            lock.lock(); defer { lock.unlock() }
-            if resolved { return false }
+        private var timeoutItem: DispatchWorkItem?
+        private let connection: NWConnection
+        private let continuation: CheckedContinuation<Double?, Never>
+
+        init(connection: NWConnection, continuation: CheckedContinuation<Double?, Never>) {
+            self.connection = connection
+            self.continuation = continuation
+        }
+
+        func setTimeoutItem(_ item: DispatchWorkItem) {
+            lock.lock(); timeoutItem = item; lock.unlock()
+        }
+
+        func finish(_ value: Double?) {
+            lock.lock()
+            if resolved { lock.unlock(); return }
             resolved = true
-            return true
+            let item = timeoutItem
+            timeoutItem = nil
+            lock.unlock()
+
+            item?.cancel()
+            connection.cancel()
+            continuation.resume(returning: value)
         }
     }
 
