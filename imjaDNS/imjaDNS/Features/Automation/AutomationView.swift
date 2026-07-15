@@ -7,6 +7,27 @@ struct AutomationView: View {
     var body: some View {
         List {
             Section {
+                Toggle("Use a DNS on cellular data", isOn: Binding(
+                    get: { store.cellularEnabled },
+                    set: { store.send(.setCellularEnabled($0)) }
+                ))
+                if store.cellularEnabled {
+                    Picker("Profile", selection: Binding(
+                        get: { store.cellularProfileID },
+                        set: { store.send(.setCellularProfile($0)) }
+                    )) {
+                        ForEach(store.profiles) { profile in
+                            Text(profile.name).tag(UUID?.some(profile.id))
+                        }
+                    }
+                }
+            } header: {
+                Text("Cellular data")
+            } footer: {
+                Text("When on, iOS automatically applies this DNS on mobile data and turns it off on Wi-Fi — enforced by the system in the background, even when imjaDNS is closed.")
+            }
+
+            Section {
                 if store.rules.isEmpty {
                     Text("No automation rules yet. Add one to switch DNS automatically based on your network or the time of day.")
                         .font(.subheadline)

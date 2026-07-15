@@ -70,6 +70,28 @@ enum DNSApplyService {
         reloadWidgets()
     }
 
+    /// Installs a profile as **cellular-only** via on-demand rules: iOS applies
+    /// it on mobile data and turns it off on Wi-Fi, enforced in the background.
+    static func applyCellularOnly(_ profile: DNSProfile) async throws {
+        try await DNSManager.shared.applyProfile(profile, condition: .cellularOnly)
+        await PersistenceManager.shared.saveActiveProfileID(profile.id)
+        await PersistenceManager.shared.saveLastAppliedProfileID(profile.id)
+        await appendLog(ConnectionLogEntry(
+            profileName: "\(profile.name) · cellular",
+            servers: profile.servers,
+            action: .applied
+        ))
+        WidgetStateStore.save(WidgetState(
+            isActive: true,
+            profileName: profile.name,
+            categoryIcon: profile.category.icon,
+            gradient: profile.category.gradient,
+            latencyMs: nil,
+            updatedAt: Date()
+        ))
+        reloadWidgets()
+    }
+
     private static func appendLog(_ entry: ConnectionLogEntry) async {
         var log = await PersistenceManager.shared.loadConnectionLog()
         log.append(entry)

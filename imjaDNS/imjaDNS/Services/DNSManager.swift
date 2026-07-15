@@ -59,7 +59,21 @@ final class DNSManager {
         return !servers.isEmpty
     }
 
+    /// When a profile's DNS should be active. `.always` applies system-wide;
+    /// the scoped cases install `onDemandRules` so iOS enforces the DNS only on
+    /// that network — even in the background, with the app closed.
+    enum NetworkCondition: Equatable, Sendable {
+        case always
+        case cellularOnly
+        case wifiOnly
+        case ssidOnly([String])
+    }
+
     func applyProfile(_ profile: DNSProfile) async throws {
+        try await applyProfile(profile, condition: .always)
+    }
+
+    func applyProfile(_ profile: DNSProfile, condition: NetworkCondition) async throws {
         guard !profile.servers.isEmpty else {
             throw DNSError.noServersProvided
         }
@@ -109,12 +123,41 @@ final class DNSManager {
             mgr.dnsSettings = settings
         }
 
+        mgr.onDemandRules = Self.onDemandRules(for: condition)
+
         do {
             try await mgr.saveToPreferences()
             try await mgr.loadFromPreferences()
-            log.info("DNS applied: \(profile.name, privacy: .public) [\(profile.servers.joined(separator: ", "), privacy: .public)]")
+            log.info("DNS applied: \(profile.name, privacy: .public) [\(profile.servers.joined(separator: ", "), privacy: .public)] condition=\(String(describing: condition), privacy: .public)")
         } catch {
             throw DNSError.saveFailed(error)
+        }
+    }
+
+    /// Builds the on-demand rules for a network condition. `nil` means always on.
+    private static func onDemandRules(for condition: NetworkCondition) -> [NEOnDemandRule]? {
+        switch condition {
+        case .always:
+            return nil
+        case .cellularOnly:
+            let connect = NEOnDemandRuleConnect()
+            connect.interfaceTypeMatch = .cellular
+            let off = NEOnDemandRuleDisconnect()
+            off.interfaceTypeMatch = .any
+            return [connect, off]
+        case .wifiOnly:
+            let connect = NEOnDemandRuleConnect()
+            connect.interfaceTypeMatch = .wiFi
+            let off = NEOnDemandRuleDisconnect()
+            off.interfaceTypeMatch = .any
+            return [connect, off]
+        case .ssidOnly(let ssids):
+            let connect = NEOnDemandRuleConnect()
+            connect.interfaceTypeMatch = .wiFi
+            connect.ssidMatch = ssids
+            let off = NEOnDemandRuleDisconnect()
+            off.interfaceTypeMatch = .any
+            return [connect, off]
         }
     }
 

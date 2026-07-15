@@ -23,12 +23,15 @@ actor PersistenceManager {
         static let selectedCategory = "selectedCategory"
         static let speedTestResults = "speedTestResults"
         static let automationRules = "automationRules"
+        static let cellularDNSEnabled = "cellularDNSEnabled"
+        static let cellularDNSProfileID = "cellularDNSProfileID"
         static let didMigrateToAppGroup = "didMigrateToAppGroup"
 
         static let migratable = [
             customProfiles, favoriteIDs, connectionLog, activeProfileID,
             lastAppliedProfileID, lastUsedDNS, autoApplyDNS, hasCompletedOnboarding,
-            hasShownDNSAlert, selectedCategory, speedTestResults, automationRules
+            hasShownDNSAlert, selectedCategory, speedTestResults, automationRules,
+            cellularDNSEnabled, cellularDNSProfileID
         ]
     }
 
@@ -157,6 +160,23 @@ actor PersistenceManager {
             return []
         }
         return rules
+    }
+
+    // MARK: - Cellular DNS (on-demand)
+
+    func saveCellularDNS(enabled: Bool, profileID: UUID?) {
+        defaults.set(enabled, forKey: Keys.cellularDNSEnabled)
+        if let profileID {
+            defaults.set(profileID.uuidString, forKey: Keys.cellularDNSProfileID)
+        } else {
+            defaults.removeObject(forKey: Keys.cellularDNSProfileID)
+        }
+    }
+
+    func loadCellularDNS() -> (enabled: Bool, profileID: UUID?) {
+        let enabled = defaults.bool(forKey: Keys.cellularDNSEnabled)
+        let id = defaults.string(forKey: Keys.cellularDNSProfileID).flatMap { UUID(uuidString: $0) }
+        return (enabled, id)
     }
 
     // MARK: - Settings

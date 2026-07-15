@@ -10,6 +10,10 @@ struct AutomationFeature {
         var isAddingRule = false
         var draft = Draft()
 
+        // System-enforced "use this DNS on cellular data" (on-demand rules).
+        var cellularEnabled = false
+        var cellularProfileID: UUID?
+
         struct Draft: Equatable {
             var kind: TriggerKind = .anyWifi
             var ssid = ""
@@ -51,6 +55,9 @@ struct AutomationFeature {
     enum Action: BindableAction, Equatable {
         case onAppear
         case loaded(rules: [AutomationRule], profiles: [DNSProfile])
+        case cellularLoaded(enabled: Bool, profileID: UUID?)
+        case setCellularEnabled(Bool)
+        case setCellularProfile(UUID?)
         case addRuleTapped
         case saveDraft
         case cancelDraft
@@ -67,13 +74,34 @@ struct AutomationFeature {
                 return .run { send in
                     let rules = await PersistenceManager.shared.loadAutomationRules()
                     let profiles = await ProfileProvider.allProfiles()
+                    let cellular = await PersistenceManager.shared.loadCellularDNS()
                     await send(.loaded(rules: rules, profiles: profiles))
+                    await send(.cellularLoaded(enabled: cellular.enabled, profileID: cellular.profileID))
                 }
 
             case let .loaded(rules, profiles):
                 state.rules = rules
                 state.profiles = profiles
                 return .none
+
+            case let .cellularLoaded(enabled, profileID):
+                state.cellularEnabled = enabled
+                state.cellularProfileID = profileID
+                return .none
+
+            case let .setCellularEnabled(enabled):
+                state.cellularEnabled = enabled
+                if enabled && state.cellularProfileID == nil {
+                    state.cellularProfileID = state.profiles.first?.id
+                }
+                return applyCellular(enabled: state.cellularEnabled, profileID: state.cellularProfileID, profiles: state.profiles)
+
+            case let .setCellularProfile(id):
+                state.cellularProfileID = id
+                if state.cellularEnabled {
+                    return applyCellular(enabled: true, profileID: id, profiles: state.profiles)
+                }
+                return .run { _ in await PersistenceManager.shared.saveCellularDNS(enabled: false, profileID: id) }
 
             case .addRuleTapped:
                 state.draft = State.Draft()
@@ -113,6 +141,17 @@ struct AutomationFeature {
         .run { _ in
             await PersistenceManager.shared.saveAutomationRules(rules)
             await AutomationEngine.shared.evaluate()
+        }
+    }
+
+    private func applyCellular(enabled: Bool, profileID: UUID?, profiles: [DNSProfile]) -> Effect<Action> {
+        .run { _ in
+            await PersistenceManager.shared.saveCellularDNS(enabled: enabled, profileID: profileID)
+            if enabled, let profileID, let profile = profiles.first(where: { $0.id == profileID }) {
+                try? await DNSApplyService.applyCellularOnly(profile)
+            } else if !enabled {
+                try? await DNSApplyService.disable()
+            }
         }
     }
 }
