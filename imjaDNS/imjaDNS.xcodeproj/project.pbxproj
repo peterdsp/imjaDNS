@@ -231,6 +231,8 @@
 			knownRegions = (
 				en,
 				Base,
+				el,
+				sq,
 			);
 			mainGroup = 2C198ABF2DCA02AC0036EF30;
 			minimizedProjectReferenceProxies = 1;
@@ -439,7 +441,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = imjaDNS/App/imjaDNS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = YTS4KJBX3P;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -484,7 +486,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = imjaDNS/App/imjaDNS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = YTS4KJBX3P;
 				ENABLE_HARDENED_RUNTIME = YES;

@@ -1,0 +1,324 @@
+{
+  "sourceLanguage" : "en",
+  "version" : "1.0",
+  "strings" : {
+    "Active" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Ενεργό" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Aktiv" } }
+      }
+    },
+    "Add Custom DNS" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Προσθήκη προσαρμοσμένου DNS" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Shto DNS të personalizuar" } }
+      }
+    },
+    "Add Profile" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Προσθήκη προφίλ" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Shto profil" } }
+      }
+    },
+    "Add Rule" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Προσθήκη κανόνα" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Shto rregull" } }
+      }
+    },
+    "Apply" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Εφαρμογή" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Zbato" } }
+      }
+    },
+    "Automation" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Αυτοματισμός" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Automatizim" } }
+      }
+    },
+    "Backup" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Αντίγραφο ασφαλείας" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Kopje rezervë" } }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Άκυρο" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Anulo" } }
+      }
+    },
+    "Clear" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Εκκαθάριση" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Pastro" } }
+      }
+    },
+    "Connection Log" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Ιστορικό συνδέσεων" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Historia e lidhjeve" } }
+      }
+    },
+    "Dashboard" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Πίνακας" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Paneli" } }
+      }
+    },
+    "Delete" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Διαγραφή" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Fshi" } }
+      }
+    },
+    "Device Management" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Διαχείριση συσκευής" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Menaxhimi i pajisjes" } }
+      }
+    },
+    "Diagnostics" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Διαγνωστικά" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Diagnostikë" } }
+      }
+    },
+    "Disable DNS" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Απενεργοποίηση DNS" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Çaktivizo DNS" } }
+      }
+    },
+    "DNS Profiles" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Προφίλ DNS" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Profilet DNS" } }
+      }
+    },
+    "DNS Servers" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Διακομιστές DNS" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Serverët DNS" } }
+      }
+    },
+    "Done" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Τέλος" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "U krye" } }
+      }
+    },
+    "Encryption" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Κρυπτογράφηση" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Enkriptim" } }
+      }
+    },
+    "Everything looks good" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Όλα φαίνονται καλά" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Gjithçka duket mirë" } }
+      }
+    },
+    "Export all profiles" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Εξαγωγή όλων των προφίλ" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Eksporto të gjitha profilet" } }
+      }
+    },
+    "Fastest right now" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Ταχύτερο αυτή τη στιγμή" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Më i shpejti tani" } }
+      }
+    },
+    "Import profiles" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Εισαγωγή προφίλ" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Importo profile" } }
+      }
+    },
+    "Insights" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Στατιστικά" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Statistika" } }
+      }
+    },
+    "Leaderboard" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Κατάταξη" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Renditja" } }
+      }
+    },
+    "Latency over time" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Καθυστέρηση με τον χρόνο" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Vonesa me kalimin e kohës" } }
+      }
+    },
+    "Log" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Ιστορικό" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Historiku" } }
+      }
+    },
+    "Network" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Δίκτυο" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Rrjeti" } }
+      }
+    },
+    "New Rule" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Νέος κανόνας" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Rregull i ri" } }
+      }
+    },
+    "No history yet" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Δεν υπάρχει ιστορικό ακόμη" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Ende pa histori" } }
+      }
+    },
+    "OK" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Εντάξει" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Në rregull" } }
+      }
+    },
+    "Open Settings" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Άνοιγμα ρυθμίσεων" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Hap cilësimet" } }
+      }
+    },
+    "Profile Name" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Όνομα προφίλ" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Emri i profilit" } }
+      }
+    },
+    "Profiles" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Προφίλ" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Profilet" } }
+      }
+    },
+    "Ready to check your DNS" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Έτοιμο για έλεγχο του DNS σας" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Gati për të kontrolluar DNS-in tënd" } }
+      }
+    },
+    "Reachability" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Προσβασιμότητα" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Arritshmëria" } }
+      }
+    },
+    "Reset" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Επαναφορά" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Rivendos" } }
+      }
+    },
+    "Reset All Settings" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Επαναφορά όλων των ρυθμίσεων" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Rivendos të gjitha cilësimet" } }
+      }
+    },
+    "Rules" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Κανόνες" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Rregullat" } }
+      }
+    },
+    "Run Again" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Εκτέλεση ξανά" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Ekzekuto sërish" } }
+      }
+    },
+    "Run Diagnostics" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Εκτέλεση διαγνωστικών" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Ekzekuto diagnostikën" } }
+      }
+    },
+    "Running checks…" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Εκτέλεση ελέγχων…" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Duke kryer kontrollet…" } }
+      }
+    },
+    "Save" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Αποθήκευση" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Ruaj" } }
+      }
+    },
+    "Scan a profile QR" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Σάρωση QR προφίλ" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Skano një QR profili" } }
+      }
+    },
+    "Settings" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Ρυθμίσεις" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Cilësimet" } }
+      }
+    },
+    "Share" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Κοινή χρήση" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Ndaj" } }
+      }
+    },
+    "Share & Sync" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Κοινή χρήση & συγχρονισμός" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Ndarje & sinkronizim" } }
+      }
+    },
+    "Speed Test" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Τεστ ταχύτητας" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Test shpejtësie" } }
+      }
+    },
+    "Start" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Έναρξη" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Nis" } }
+      }
+    },
+    "Sync with iCloud" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Συγχρονισμός με iCloud" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Sinkronizo me iCloud" } }
+      }
+    },
+    "Test" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Δοκιμή" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Testo" } }
+      }
+    },
+    "Testing..." : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Δοκιμή..." } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Duke testuar..." } }
+      }
+    },
+    "When" : {
+      "localizations" : {
+        "el" : { "stringUnit" : { "state" : "translated", "value" : "Πότε" } },
+        "sq" : { "stringUnit" : { "state" : "translated", "value" : "Kur" } }
+      }
+    }
+  }
+}
