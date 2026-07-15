@@ -177,13 +177,15 @@
   }
 
   // ---- UI ---------------------------------------------------------------
-  function fmt(n) { return n >= 100 ? Math.round(n) : n >= 10 ? n.toFixed(1) : n.toFixed(2); }
+  var CIRC = 540.35; // 2·π·r, r = 86
 
+  function fmt(n) { return n >= 100 ? String(Math.round(n)) : n >= 10 ? n.toFixed(1) : n.toFixed(2); }
   function ratingClass(r) { return r === 2 ? "smooth" : r === 1 ? "tight" : "struggles"; }
+  // Map speed (Mbps) to a 0..1 gauge fill on a log scale (~1 at 1 Gbps).
+  function speedToFrac(mbps) { return Math.max(0, Math.min(1, Math.log10(mbps + 1) / 3)); }
 
   document.addEventListener("DOMContentLoaded", function () {
     var L = t();
-    // static strings
     document.querySelectorAll("[data-i18n]").forEach(function (el) {
       var key = el.getAttribute("data-i18n");
       if (L[key]) el.textContent = L[key];
@@ -191,13 +193,17 @@
 
     var startBtn = document.getElementById("startBtn");
     var live = document.getElementById("live");
-    var phase = document.getElementById("phase");
-    var ring = document.getElementById("ring");
+    var gauge = document.getElementById("gauge");
+    var gaugeFill = document.getElementById("gaugeFill");
     var meta = document.getElementById("meta");
+    var steps = {
+      ping: document.getElementById("step-ping"),
+      download: document.getElementById("step-download"),
+      upload: document.getElementById("step-upload")
+    };
     var out = { down: document.getElementById("m-down"), up: document.getElementById("m-up"), ping: document.getElementById("m-ping"), jit: document.getElementById("m-jit") };
     var grid = document.getElementById("scenarios");
 
-    // render scenario cards
     SCENARIOS.forEach(function (s) {
       var names = L.scenarios[s.id];
       var card = document.createElement("div");
@@ -211,7 +217,17 @@
       grid.appendChild(card);
     });
 
-    function setProgress(p) { ring.style.setProperty("--p", Math.max(0, Math.min(1, p)) * 100); }
+    function setGauge(frac) { gaugeFill.style.strokeDashoffset = CIRC * (1 - Math.max(0, Math.min(1, frac))); }
+    function setStep(name, state) {
+      var el = steps[name]; if (!el) return;
+      el.classList.remove("active", "done"); if (state) el.classList.add(state);
+    }
+
+    // Smooth live-number animation.
+    var liveTarget = 0, liveCur = 0, liveRAF = null;
+    function animate() { liveCur += (liveTarget - liveCur) * 0.18; live.textContent = fmt(liveCur); liveRAF = requestAnimationFrame(animate); }
+    function startAnim() { if (!liveRAF) liveRAF = requestAnimationFrame(animate); }
+    function stopAnim(finalVal) { if (liveRAF) { cancelAnimationFrame(liveRAF); liveRAF = null; } if (finalVal != null) { liveCur = finalVal; live.textContent = fmt(finalVal); } }
 
     function rate(d, u, p, j) {
       SCENARIOS.forEach(function (s) {
@@ -230,42 +246,47 @@
       running = true;
       startBtn.disabled = true;
       startBtn.textContent = L.testing;
-      ring.classList.add("active");
+      gauge.classList.add("active");
       out.down.textContent = out.up.textContent = out.ping.textContent = out.jit.textContent = "–";
-      live.textContent = "0";
+      setStep("ping", null); setStep("download", null); setStep("upload", null);
+      liveCur = 0; liveTarget = 0; setGauge(0); startAnim();
 
       // ping
-      phase.textContent = L.pinging;
+      setStep("ping", "active");
       var pj = await measurePing();
       out.ping.textContent = Math.round(pj.ping);
       out.jit.textContent = Math.round(pj.jitter);
+      setStep("ping", "done");
 
       // download
-      phase.textContent = L.downloading;
-      var d = await measureDownload(function (mbps, p) { live.textContent = fmt(mbps); setProgress(p); });
+      setStep("download", "active");
+      var d = await measureDownload(function (mbps) { liveTarget = mbps; setGauge(speedToFrac(mbps)); });
       out.down.textContent = fmt(d);
+      setStep("download", "done");
 
       // upload
-      phase.textContent = L.uploading;
-      live.textContent = "0";
-      var u = await measureUpload(function (mbps, p) { live.textContent = fmt(mbps); setProgress(p); });
+      setStep("upload", "active");
+      liveTarget = 0; liveCur = 0;
+      var u = await measureUpload(function (mbps) { liveTarget = mbps; setGauge(speedToFrac(mbps)); });
       out.up.textContent = fmt(u);
+      setStep("upload", "done");
 
-      // scenarios
+      // results
       rate(d, u, pj.ping, pj.jitter);
-
-      phase.textContent = L.done;
-      live.textContent = fmt(d);
-      ring.classList.remove("active");
-      setProgress(1);
+      liveTarget = d; setGauge(speedToFrac(d));
+      setTimeout(function () { stopAnim(d); }, 600);
+      gauge.classList.remove("active");
       startBtn.disabled = false;
       startBtn.textContent = L.again;
       running = false;
 
       fetchMeta().then(function (m) {
-        if (m && (m.city || m.colo)) {
-          meta.textContent = L.metaPrefix + " · " + [m.city, m.colo].filter(Boolean).join(" (") + (m.colo ? ")" : "");
-        }
+        if (!m) return;
+        var city = typeof m.city === "string" ? m.city : "";
+        var colo = typeof m.colo === "string" ? m.colo : "";
+        var where = city + (colo ? " (" + colo + ")" : "");
+        if (where) meta.textContent = L.metaPrefix + " · " + where;
+        else meta.textContent = L.metaPrefix;
       });
     }
 

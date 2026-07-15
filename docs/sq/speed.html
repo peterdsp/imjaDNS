@@ -12,7 +12,7 @@
   <link rel="alternate" hreflang="el" href="https://imjadns.peterdsp.dev/el/speed.html" />
   <link rel="alternate" hreflang="sq" href="https://imjadns.peterdsp.dev/sq/speed.html" />
   <link rel="alternate" hreflang="x-default" href="https://imjadns.peterdsp.dev/speed.html" />
-  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="../style.css?v=2" />
 </head>
 <body>
   <div class="mesh" aria-hidden="true">
@@ -47,14 +47,26 @@
         </div>
 
         <div class="glass speed-panel reveal">
-          <div class="speed-stage">
-            <div class="speed-ring" id="ring">
-              <div class="speed-center">
-                <div class="speed-live" id="live">–</div>
-                <div class="speed-unit">Mbps</div>
-                <div class="speed-phase" id="phase" data-i18n="ready">Gati</div>
-              </div>
+          <div class="speed-gauge" id="gauge">
+            <svg class="gauge-svg" viewBox="0 0 200 200" aria-hidden="true">
+              <defs>
+                <linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#38BDF8" />
+                  <stop offset="1" stop-color="#8B5CF6" />
+                </linearGradient>
+              </defs>
+              <circle class="gauge-track" cx="100" cy="100" r="86" />
+              <circle class="gauge-fill" id="gaugeFill" cx="100" cy="100" r="86" />
+            </svg>
+            <div class="gauge-center">
+              <div class="speed-live" id="live">–</div>
+              <div class="speed-unit">Mbps</div>
             </div>
+          </div>
+          <div class="phase-steps">
+            <span id="step-ping" data-i18n="ping">Ping</span>
+            <span id="step-download" data-i18n="download">Shkarkim</span>
+            <span id="step-upload" data-i18n="upload">Ngarkim</span>
           </div>
 
           <div class="metrics">
@@ -92,6 +104,6 @@
     document.documentElement.classList.add('js');
     document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
   </script>
-  <script src="../speedtest.js"></script>
+  <script src="../speedtest.js?v=2"></script>
 </body>
 </html>
