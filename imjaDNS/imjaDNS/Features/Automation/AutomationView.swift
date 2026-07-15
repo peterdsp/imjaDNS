@@ -61,11 +61,16 @@ struct AutomationView: View {
         }
     }
 
+    private func profileName(for id: UUID?) -> String {
+        guard let id else { return "Disable DNS" }
+        return store.profiles.first { $0.id == id }?.name ?? "Unknown"
+    }
+
     private func ruleRow(_ rule: AutomationRule) -> some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
                 Text(rule.trigger.summary).font(.subheadline.weight(.medium))
-                Text("→ \(store.profileName(for: rule.profileID))")
+                Text("→ \(profileName(for: rule.profileID))")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

@@ -46,10 +46,6 @@ struct AutomationFeature {
             var id: String { rawValue }
         }
 
-        func profileName(for id: UUID?) -> String {
-            guard let id else { return "Disable DNS" }
-            return profiles.first { $0.id == id }?.name ?? "Unknown"
-        }
     }
 
     enum Action: BindableAction, Equatable {
