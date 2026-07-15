@@ -7,12 +7,25 @@ struct SpeedTestView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                testButton
-                if !store.results.isEmpty {
-                    resultsSection
+                Picker("Mode", selection: Binding(
+                    get: { store.mode },
+                    set: { store.send(.setMode($0)) }
+                )) {
+                    Text("DNS").tag(SpeedTestFeature.Mode.dns)
+                    Text("Internet").tag(SpeedTestFeature.Mode.internet)
                 }
-                if !store.pastResults.isEmpty && store.results.isEmpty {
-                    pastResultsSection
+                .pickerStyle(.segmented)
+
+                if store.mode == .dns {
+                    testButton
+                    if !store.results.isEmpty {
+                        resultsSection
+                    }
+                    if !store.pastResults.isEmpty && store.results.isEmpty {
+                        pastResultsSection
+                    }
+                } else {
+                    internetContent
                 }
             }
             .padding(.horizontal, 20)
@@ -22,6 +35,146 @@ struct SpeedTestView: View {
         .background { AnimatedMeshBackground() }
         .navigationTitle("Speed Test")
         .onAppear { store.send(.onAppear) }
+    }
+
+    // MARK: - Internet bandwidth test
+
+    @ViewBuilder private var internetContent: some View {
+        internetGauge
+
+        HStack(spacing: 12) {
+            internetMetric(fmtMbps(store.downloadMbps), "Download")
+            internetMetric(fmtMbps(store.uploadMbps), "Upload")
+            internetMetric(store.pingMs.map { "\(Int($0.rounded()))" } ?? "–", "Ping")
+            internetMetric(store.jitterMs.map { "\(Int($0.rounded()))" } ?? "–", "Jitter")
+        }
+
+        Button {
+            store.send(.startInternetTest)
+        } label: {
+            Text(internetButtonTitle)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 6)
+        }
+        .buttonStyle(.borderedProminent)
+        .tint(Color(hex: "00D2FF"))
+        .disabled(store.isRunningInternet)
+
+        if !store.scenarios.isEmpty {
+            VStack(alignment: .leading, spacing: 12) {
+                SectionHeader("Real-world scenarios", icon: "square.grid.2x2.fill")
+                ForEach(store.scenarios) { scenarioRow($0) }
+            }
+        }
+
+        Text("Measured via Cloudflare. Guidance, not a guarantee — real performance depends on your devices and Wi-Fi. Only throwaway test data leaves your device.")
+            .font(.caption2)
+            .foregroundStyle(.secondary)
+            .multilineTextAlignment(.center)
+            .padding(.top, 4)
+    }
+
+    private var internetGauge: some View {
+        let frac = min(1, max(0, log10(max(0, store.liveMbps) + 1) / 3))
+        return VStack(spacing: 14) {
+            ZStack {
+                Circle()
+                    .stroke(.white.opacity(0.08), lineWidth: 13)
+                Circle()
+                    .trim(from: 0, to: frac)
+                    .stroke(
+                        AngularGradient(colors: [Color(hex: "38BDF8"), Color(hex: "8B5CF6"), Color(hex: "38BDF8")], center: .center),
+                        style: StrokeStyle(lineWidth: 13, lineCap: .round)
+                    )
+                    .rotationEffect(.degrees(-90))
+                    .animation(.easeOut(duration: 0.3), value: store.liveMbps)
+                VStack(spacing: 2) {
+                    Text(fmtLive(store.liveMbps))
+                        .font(.system(size: 52, weight: .bold, design: .rounded))
+                        .monospacedDigit()
+                    Text("Mbps").font(.caption).foregroundStyle(.secondary)
+                    Text(phaseLabel)
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(Color(hex: "00D2FF"))
+                        .textCase(.uppercase)
+                }
+            }
+            .frame(width: 220, height: 220)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 8)
+    }
+
+    private func internetMetric(_ value: String, _ label: String) -> some View {
+        GlassCard {
+            VStack(spacing: 4) {
+                Text(value).font(.title3.weight(.bold).monospacedDigit())
+                Text(label).font(.caption2).foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity)
+        }
+    }
+
+    private func scenarioRow(_ s: ScenarioResult) -> some View {
+        GlassCard {
+            HStack(spacing: 12) {
+                Image(systemName: s.icon)
+                    .font(.title3)
+                    .foregroundStyle(ratingColor(s.rating))
+                    .frame(width: 28)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(s.name).font(.subheadline.weight(.semibold))
+                    Text(s.detail).font(.caption).foregroundStyle(.secondary)
+                }
+                Spacer()
+                Text(ratingLabel(s.rating))
+                    .font(.caption.weight(.bold))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(ratingColor(s.rating).opacity(0.16), in: Capsule())
+                    .foregroundStyle(ratingColor(s.rating))
+            }
+        }
+    }
+
+    private var internetButtonTitle: String {
+        if store.isRunningInternet { return "Testing…" }
+        return store.internetPhase == .done ? "Test again" : "Start test"
+    }
+
+    private var phaseLabel: String {
+        switch store.internetPhase {
+        case .idle: return "Ready"
+        case .ping: return "Ping"
+        case .download: return "Download"
+        case .upload: return "Upload"
+        case .done: return "Done"
+        }
+    }
+
+    private func fmtLive(_ v: Double) -> String {
+        v >= 100 ? String(Int(v.rounded())) : String(format: "%.1f", v)
+    }
+
+    private func fmtMbps(_ v: Double?) -> String {
+        guard let v else { return "–" }
+        return v >= 100 ? String(Int(v.rounded())) : String(format: "%.1f", v)
+    }
+
+    private func ratingColor(_ r: SpeedRating) -> Color {
+        switch r {
+        case .smooth: return Color(hex: "38EF7D")
+        case .tight: return Color(hex: "F2C94C")
+        case .struggles: return Color(hex: "FF5858")
+        }
+    }
+
+    private func ratingLabel(_ r: SpeedRating) -> String {
+        switch r {
+        case .smooth: return "Smooth"
+        case .tight: return "Tight"
+        case .struggles: return "Struggles"
+        }
     }
 
     // MARK: - Test Button

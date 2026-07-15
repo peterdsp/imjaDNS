@@ -3,14 +3,30 @@ import Foundation
 
 @Reducer
 struct SpeedTestFeature {
+    enum Mode: String, Equatable, Sendable { case dns, internet }
+    enum InternetPhase: Equatable, Sendable { case idle, ping, download, upload, done }
+
     @ObservableState
     struct State: Equatable {
+        var mode: Mode = .dns
+
+        // DNS latency test
         var profiles: [DNSProfile] = []
         var results: [UUID: Double] = [:]
         var isTesting: Bool = false
         var currentTestIndex: Int = 0
         var totalTests: Int = 0
         var pastResults: [SpeedTestResult] = []
+
+        // Internet bandwidth test
+        var internetPhase: InternetPhase = .idle
+        var isRunningInternet: Bool = false
+        var liveMbps: Double = 0
+        var downloadMbps: Double?
+        var uploadMbps: Double?
+        var pingMs: Double?
+        var jitterMs: Double?
+        var scenarios: [ScenarioResult] = []
     }
 
     enum Action: Equatable {
@@ -21,6 +37,14 @@ struct SpeedTestFeature {
         case testComplete
         case pastResultsLoaded([SpeedTestResult])
         case clearResults
+        // Internet
+        case setMode(Mode)
+        case startInternetTest
+        case internetPhaseChanged(InternetPhase)
+        case internetLive(Double)
+        case internetPing(Double, Double)
+        case internetDownload(Double)
+        case internetComplete(down: Double, up: Double, ping: Double, jitter: Double)
     }
 
     var body: some ReducerOf<Self> {
@@ -87,6 +111,70 @@ struct SpeedTestFeature {
                 return .run { _ in
                     await PersistenceManager.shared.saveSpeedTestResults([])
                 }
+
+            // MARK: - Internet bandwidth test
+
+            case let .setMode(mode):
+                state.mode = mode
+                return .none
+
+            case .startInternetTest:
+                guard !state.isRunningInternet else { return .none }
+                state.isRunningInternet = true
+                state.liveMbps = 0
+                state.downloadMbps = nil
+                state.uploadMbps = nil
+                state.pingMs = nil
+                state.jitterMs = nil
+                state.scenarios = []
+                state.internetPhase = .ping
+                return .run { send in
+                    // Internet transfers need more headroom than a DNS probe.
+                    let base = await SpeedProbe.adaptiveTimeout()
+                    let (ping, jitter) = await InternetSpeedTester.ping(timeout: max(6, base))
+                    await send(.internetPing(ping, jitter))
+
+                    await send(.internetPhaseChanged(.download))
+                    let down = await InternetSpeedTester.download(timeout: max(12, base * 3)) { mbps in
+                        Task { await send(.internetLive(mbps)) }
+                    }
+                    await send(.internetDownload(down))
+
+                    await send(.internetPhaseChanged(.upload))
+                    await send(.internetLive(0))
+                    let up = await InternetSpeedTester.upload(timeout: max(12, base * 3)) { mbps in
+                        Task { await send(.internetLive(mbps)) }
+                    }
+                    await send(.internetComplete(down: down, up: up, ping: ping, jitter: jitter))
+                }
+
+            case let .internetPhaseChanged(phase):
+                state.internetPhase = phase
+                return .none
+
+            case let .internetLive(mbps):
+                state.liveMbps = mbps
+                return .none
+
+            case let .internetPing(ping, jitter):
+                state.pingMs = ping
+                state.jitterMs = jitter
+                return .none
+
+            case let .internetDownload(down):
+                state.downloadMbps = down
+                return .none
+
+            case let .internetComplete(down, up, ping, jitter):
+                state.downloadMbps = down
+                state.uploadMbps = up
+                state.pingMs = ping
+                state.jitterMs = jitter
+                state.liveMbps = down
+                state.scenarios = InternetScenarios.evaluate(down: down, up: up, ping: ping, jitter: jitter)
+                state.internetPhase = .done
+                state.isRunningInternet = false
+                return .none
             }
         }
     }
