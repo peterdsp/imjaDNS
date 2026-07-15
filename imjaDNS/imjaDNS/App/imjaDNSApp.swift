@@ -28,6 +28,9 @@ struct imjaDNSApp: App {
     private let speedTestStore = Store(initialState: SpeedTestFeature.State()) {
         SpeedTestFeature()
     }
+    private let insightsStore = Store(initialState: InsightsFeature.State()) {
+        InsightsFeature()
+    }
     private let logStore = Store(initialState: ConnectionLogFeature.State()) {
         ConnectionLogFeature()
     }
@@ -68,6 +71,15 @@ struct imjaDNSApp: App {
 
             NavigationStack {
                 SpeedTestView(store: speedTestStore)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            NavigationLink {
+                                InsightsView(store: insightsStore)
+                            } label: {
+                                Image(systemName: "chart.xyaxis.line")
+                            }
+                        }
+                    }
             }
             .tabItem {
                 Label("Speed Test", systemImage: "gauge.with.dots.needle.67percent")
