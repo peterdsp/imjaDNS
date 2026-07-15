@@ -120,17 +120,7 @@ struct DNSProfileFeature {
                 state.errorMessage = nil
                 return .run { send in
                     do {
-                        try await DNSManager.shared.applyProfile(profile)
-                        await PersistenceManager.shared.saveActiveProfileID(profile.id)
-
-                        let entry = ConnectionLogEntry(
-                            profileName: profile.name,
-                            servers: profile.servers,
-                            action: .applied
-                        )
-                        var log = await PersistenceManager.shared.loadConnectionLog()
-                        log.append(entry)
-                        await PersistenceManager.shared.saveConnectionLog(log)
+                        try await DNSApplyService.apply(profile)
 
                         await send(.profileApplied(profile.id))
                         await send(.showSuccess("\(profile.name) activated"))

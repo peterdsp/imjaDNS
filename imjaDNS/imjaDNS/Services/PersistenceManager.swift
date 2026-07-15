@@ -3,7 +3,10 @@ import Foundation
 actor PersistenceManager {
     static let shared = PersistenceManager()
 
-    private let defaults = UserDefaults.standard
+    /// Shared App Group so widgets and App Intent extensions read the same store.
+    private static let appGroupID = "group.dev.peterdsp.imjaDNS"
+
+    private let defaults: UserDefaults
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
 
@@ -12,12 +15,43 @@ actor PersistenceManager {
         static let favoriteIDs = "favoriteProfileIDs"
         static let connectionLog = "connectionLog"
         static let activeProfileID = "activeProfileID"
+        static let lastAppliedProfileID = "lastAppliedProfileID"
         static let lastUsedDNS = "lastUsedDNS"
         static let autoApplyDNS = "autoApplyDNS"
         static let hasCompletedOnboarding = "hasCompletedOnboarding"
         static let hasShownDNSAlert = "hasShownDNSAlert"
         static let selectedCategory = "selectedCategory"
         static let speedTestResults = "speedTestResults"
+        static let didMigrateToAppGroup = "didMigrateToAppGroup"
+
+        static let migratable = [
+            customProfiles, favoriteIDs, connectionLog, activeProfileID,
+            lastAppliedProfileID, lastUsedDNS, autoApplyDNS, hasCompletedOnboarding,
+            hasShownDNSAlert, selectedCategory, speedTestResults
+        ]
+    }
+
+    private init() {
+        if let group = UserDefaults(suiteName: Self.appGroupID) {
+            defaults = group
+            Self.migrateToAppGroupIfNeeded(into: group)
+        } else {
+            defaults = .standard
+        }
+    }
+
+    /// One-time copy of existing keys from the standard suite into the App Group,
+    /// so users updating from a pre-App-Group build keep their data. Idempotent:
+    /// only copies keys the group doesn't already have, then sets a done flag.
+    private static func migrateToAppGroupIfNeeded(into group: UserDefaults) {
+        guard !group.bool(forKey: Keys.didMigrateToAppGroup) else { return }
+        let standard = UserDefaults.standard
+        for key in Keys.migratable where group.object(forKey: key) == nil {
+            if let value = standard.object(forKey: key) {
+                group.set(value, forKey: key)
+            }
+        }
+        group.set(true, forKey: Keys.didMigrateToAppGroup)
     }
 
     // MARK: - Custom Profiles
@@ -94,6 +128,18 @@ actor PersistenceManager {
 
     func loadActiveProfileID() -> UUID? {
         guard let string = defaults.string(forKey: Keys.activeProfileID) else { return nil }
+        return UUID(uuidString: string)
+    }
+
+    /// The last profile that was actually applied. Unlike `activeProfileID`, this
+    /// is NOT cleared when custom DNS is disabled, so a Control Center / widget
+    /// toggle can restore the profile the user last used.
+    func saveLastAppliedProfileID(_ id: UUID) {
+        defaults.set(id.uuidString, forKey: Keys.lastAppliedProfileID)
+    }
+
+    func loadLastAppliedProfileID() -> UUID? {
+        guard let string = defaults.string(forKey: Keys.lastAppliedProfileID) else { return nil }
         return UUID(uuidString: string)
     }
 
