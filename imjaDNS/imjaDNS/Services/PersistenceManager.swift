@@ -22,12 +22,13 @@ actor PersistenceManager {
         static let hasShownDNSAlert = "hasShownDNSAlert"
         static let selectedCategory = "selectedCategory"
         static let speedTestResults = "speedTestResults"
+        static let automationRules = "automationRules"
         static let didMigrateToAppGroup = "didMigrateToAppGroup"
 
         static let migratable = [
             customProfiles, favoriteIDs, connectionLog, activeProfileID,
             lastAppliedProfileID, lastUsedDNS, autoApplyDNS, hasCompletedOnboarding,
-            hasShownDNSAlert, selectedCategory, speedTestResults
+            hasShownDNSAlert, selectedCategory, speedTestResults, automationRules
         ]
     }
 
@@ -141,6 +142,21 @@ actor PersistenceManager {
     func loadLastAppliedProfileID() -> UUID? {
         guard let string = defaults.string(forKey: Keys.lastAppliedProfileID) else { return nil }
         return UUID(uuidString: string)
+    }
+
+    // MARK: - Automation Rules
+
+    func saveAutomationRules(_ rules: [AutomationRule]) {
+        guard let data = try? encoder.encode(rules) else { return }
+        defaults.set(data, forKey: Keys.automationRules)
+    }
+
+    func loadAutomationRules() -> [AutomationRule] {
+        guard let data = defaults.data(forKey: Keys.automationRules),
+              let rules = try? decoder.decode([AutomationRule].self, from: data) else {
+            return []
+        }
+        return rules
     }
 
     // MARK: - Settings

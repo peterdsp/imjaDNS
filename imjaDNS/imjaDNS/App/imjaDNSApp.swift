@@ -37,6 +37,9 @@ struct imjaDNSApp: App {
     private let settingsStore = Store(initialState: SettingsFeature.State()) {
         SettingsFeature()
     }
+    private let automationStore = Store(initialState: AutomationFeature.State()) {
+        AutomationFeature()
+    }
 
     var body: some Scene {
         WindowGroup {
@@ -94,6 +97,15 @@ struct imjaDNSApp: App {
 
             NavigationStack {
                 SettingsView(store: settingsStore)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            NavigationLink {
+                                AutomationView(store: automationStore)
+                            } label: {
+                                Image(systemName: "bolt.badge.clock")
+                            }
+                        }
+                    }
             }
             .tabItem {
                 Label("Settings", systemImage: "gearshape.fill")
@@ -102,6 +114,7 @@ struct imjaDNSApp: App {
         .tint(Color(hex: "00D2FF"))
         .onAppear {
             profileStore.send(.onAppear)
+            AutomationEngine.shared.start()
         }
     }
 }
