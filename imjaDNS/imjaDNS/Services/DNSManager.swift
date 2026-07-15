@@ -137,46 +137,14 @@ final class DNSManager {
         }
     }
 
-    func testLatency(server: String, timeout: TimeInterval = 5) async -> Double? {
-        guard DNSValidation.isValidIPv4(server) || DNSValidation.isValidIPv6(server) else {
-            return nil
-        }
-
-        let start = CFAbsoluteTimeGetCurrent()
-
-        guard let url = URL(string: "http://\(server)") else { return nil }
-
-        var request = URLRequest(url: url)
-        request.timeoutInterval = timeout
-        request.httpMethod = "HEAD"
-
-        do {
-            let config = URLSessionConfiguration.ephemeral
-            config.timeoutIntervalForRequest = timeout
-            config.timeoutIntervalForResource = timeout
-            let session = URLSession(configuration: config)
-            _ = try await session.data(for: request)
-            let elapsed = (CFAbsoluteTimeGetCurrent() - start) * 1000
-            return elapsed
-        } catch {
-            let elapsed = (CFAbsoluteTimeGetCurrent() - start) * 1000
-            if elapsed < timeout * 1000 {
-                return elapsed
-            }
-            return nil
-        }
+    /// Measures real DNS round-trip latency to a plain resolver (UDP/53).
+    func testLatency(server: String, timeout: TimeInterval = 4) async -> Double? {
+        let plain = DNSProfile(name: server, servers: [server], protocolType: .plain)
+        return await DNSLatencyTester.measure(profile: plain, timeout: timeout)
     }
 
+    /// Measures latency for a profile using its actual transport (DoH/DoT/plain).
     func testProfileLatency(_ profile: DNSProfile) async -> Double? {
-        var results: [Double] = []
-
-        for server in profile.servers {
-            if let latency = await testLatency(server: server) {
-                results.append(latency)
-            }
-        }
-
-        guard !results.isEmpty else { return nil }
-        return results.min()
+        await DNSLatencyTester.measure(profile: profile)
     }
 }
