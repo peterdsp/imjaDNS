@@ -26,11 +26,7 @@ struct HomeView: View {
             "Enable DNS Configuration",
             isPresented: $store.showFirstTimeAlert.sending(\.toggleFirstTimeAlert)
         ) {
-            Button("Open Settings") {
-                if let url = URL(string: "App-Prefs:root=General&path=ManagedConfigurationList/DNS") {
-                    UIApplication.shared.open(url)
-                }
-            }
+            Button("Open Settings") { openDNSSettings() }
             Button("Later", role: .cancel) {}
         } message: {
             Text("To activate DNS profiles, go to:\n\nSettings → General → VPN & Device Management → DNS\n\nThen select imjaDNS.")
@@ -58,15 +54,13 @@ struct HomeView: View {
                 .padding(.top, 8)
 
             VStack(spacing: 6) {
-                Text(store.isCustomDNSActive ? "Protected" : "Unprotected")
+                Text(LocalizedStringKey(statusTitle))
                     .font(.title2.weight(.bold))
-                    .foregroundStyle(
-                        store.isCustomDNSActive
-                            ? AnyShapeStyle(AppTheme.accentGradient)
-                            : AnyShapeStyle(.secondary)
-                    )
+                    .foregroundStyle(statusStyle)
 
-                Text(store.currentDNS)
+                // "System Default" / "Loading…" localize; server IPs have no
+                // catalog entry and pass through unchanged.
+                Text(LocalizedStringKey(store.currentDNS))
                     .font(.subheadline.monospacedDigit())
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
@@ -79,6 +73,10 @@ struct HomeView: View {
                         .padding(.vertical, 4)
                         .background(Capsule().fill(.ultraThinMaterial))
                 }
+            }
+
+            if store.dnsStatus == .installedNotEnabled {
+                notEnabledCard
             }
 
             if store.isCustomDNSActive {
@@ -112,6 +110,53 @@ struct HomeView: View {
         .padding(.vertical, 8)
     }
 
+    private var statusTitle: String {
+        switch store.dnsStatus {
+        case .active: return "Protected"
+        case .installedNotEnabled: return "Not Enabled"
+        case .off: return "Unprotected"
+        }
+    }
+
+    private var statusStyle: AnyShapeStyle {
+        switch store.dnsStatus {
+        case .active: return AnyShapeStyle(AppTheme.accentGradient)
+        case .installedNotEnabled: return AnyShapeStyle(AppTheme.warningGradient)
+        case .off: return AnyShapeStyle(.secondary)
+        }
+    }
+
+    /// The profile is on the device but iOS is ignoring it until the user picks
+    /// imjaDNS in Settings — the one thing we cannot do for them.
+    private var notEnabledCard: some View {
+        GlassCard {
+            VStack(spacing: 10) {
+                Text("Your DNS profile is installed but switched off, so it isn't protecting you yet. Turn it on in Settings → General → VPN & Device Management → DNS.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+
+                Button {
+                    openDNSSettings()
+                } label: {
+                    Text("Open Settings")
+                        .font(.subheadline.weight(.semibold))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(AppTheme.warningGradient)
+                        .foregroundStyle(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: AppTheme.smallCornerRadius, style: .continuous))
+                }
+            }
+        }
+    }
+
+    private func openDNSSettings() {
+        if let url = URL(string: "App-Prefs:root=General&path=ManagedConfigurationList/DNS") {
+            UIApplication.shared.open(url)
+        }
+    }
+
     // MARK: - Network Info
 
     private var networkInfoCard: some View {
@@ -126,7 +171,7 @@ struct HomeView: View {
                     Text("Network")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    Text(network.connectionType.rawValue)
+                    Text(LocalizedStringKey(network.connectionType.rawValue))
                         .font(.headline)
                 }
 
@@ -143,7 +188,10 @@ struct HomeView: View {
 
     private var quickActionsSection: some View {
         VStack(spacing: 12) {
-            if store.isCustomDNSActive {
+            // Offered whenever a profile exists, not just an active one: an
+            // installed-but-disabled profile is still ours to remove, and
+            // gating on "active" left the user no way to get rid of it.
+            if store.hasProfileInstalled {
                 Button {
                     store.send(.disconnectDNS)
                 } label: {

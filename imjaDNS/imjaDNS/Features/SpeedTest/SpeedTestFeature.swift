@@ -26,6 +26,7 @@ struct SpeedTestFeature {
         var uploadMbps: Double?
         var pingMs: Double?
         var jitterMs: Double?
+        var server: String?
         var scenarios: [ScenarioResult] = []
     }
 
@@ -43,6 +44,7 @@ struct SpeedTestFeature {
         case internetPhaseChanged(InternetPhase)
         case internetLive(Double)
         case internetPing(Double, Double)
+        case internetServer(String?)
         case internetDownload(Double)
         case internetComplete(down: Double, up: Double, ping: Double, jitter: Double)
     }
@@ -131,8 +133,10 @@ struct SpeedTestFeature {
                 return .run { send in
                     // Internet transfers need more headroom than a DNS probe.
                     let base = await SpeedProbe.adaptiveTimeout()
+                    async let colo = InternetSpeedTester.server(timeout: max(6, base))
                     let (ping, jitter) = await InternetSpeedTester.ping(timeout: max(6, base))
                     await send(.internetPing(ping, jitter))
+                    await send(.internetServer(colo))
 
                     await send(.internetPhaseChanged(.download))
                     let down = await InternetSpeedTester.download(timeout: max(12, base * 3)) { mbps in
@@ -159,6 +163,10 @@ struct SpeedTestFeature {
             case let .internetPing(ping, jitter):
                 state.pingMs = ping
                 state.jitterMs = jitter
+                return .none
+
+            case let .internetServer(server):
+                state.server = server
                 return .none
 
             case let .internetDownload(down):

@@ -7,38 +7,181 @@ import Foundation
 enum InternetSpeedTester {
     private static let downBase = "https://speed.cloudflare.com/__down?bytes="
     private static let upURL = "https://speed.cloudflare.com/__up"
+    private static let traceURL = "https://speed.cloudflare.com/cdn-cgi/trace"
+
+    /// Cloudflare serves only some `bytes` values and answers the rest with a
+    /// 1-byte 403 body: 10 MB streams fine, 12 MB is refused every time. A
+    /// worker that gets refused drops to the next size here rather than
+    /// treating the error body as payload.
+    private static let downSizes = [10_000_000, 25_000_000, 1_000_000]
+
+    // MARK: - Counter
 
     /// Accumulates transferred bytes and computes throughput over a post-warmup
-    /// window, safe for concurrent streams.
-    actor Counter {
+    /// window. Touched from the URLSession delegate queue and from tasks.
+    final class Counter: @unchecked Sendable {
+        private let lock = NSLock()
         private let start = Date()
+        private let warmup: TimeInterval
         private var windowStart: Date?
         private var windowBytes = 0
         private var total = 0
 
+        init(warmup: TimeInterval) { self.warmup = warmup }
+
+        @discardableResult
         func add(_ n: Int) -> Double {
+            lock.lock()
+            defer { lock.unlock() }
             total += n
             let now = Date()
-            if let ws = windowStart {
+            if windowStart == nil {
+                if now.timeIntervalSince(start) > warmup { windowStart = now }
+            } else {
                 windowBytes += n
-                let dt = now.timeIntervalSince(ws)
-                return dt > 0 ? Double(windowBytes) * 8 / dt / 1_000_000 : 0
             }
-            if now.timeIntervalSince(start) > 0.7 { windowStart = now }
-            let dt = now.timeIntervalSince(start)
-            return dt > 0 ? Double(total) * 8 / dt / 1_000_000 : 0
+            return mbps(at: now)
         }
 
-        var byteTotal: Int { total }
+        var byteTotal: Int {
+            lock.lock()
+            defer { lock.unlock() }
+            return total
+        }
 
         func finalMbps() -> Double {
-            let now = Date()
-            if let ws = windowStart, now.timeIntervalSince(ws) > 0 {
-                return Double(windowBytes) * 8 / now.timeIntervalSince(ws) / 1_000_000
+            lock.lock()
+            defer { lock.unlock() }
+            return mbps(at: Date())
+        }
+
+        /// Caller holds `lock`. A window that just opened holds too little to
+        /// divide by, so fall back to the whole-run average until it fills —
+        /// otherwise the first bytes after warmup read as a spike, and a window
+        /// that never received any read as 0.
+        private func mbps(at now: Date) -> Double {
+            if let windowStart, windowBytes > 0 {
+                let dt = now.timeIntervalSince(windowStart)
+                if dt >= 0.25 { return Double(windowBytes) * 8 / dt / 1_000_000 }
             }
             let dt = now.timeIntervalSince(start)
             return dt > 0 ? Double(total) * 8 / dt / 1_000_000 : 0
         }
+    }
+
+    // MARK: - Streaming probe
+
+    /// Counts a transfer as it moves instead of when it finishes.
+    /// `URLSession.data(from:)` and `upload(for:from:)` only hand back a
+    /// completed response, so a chunk cut short by the deadline or the request
+    /// timeout contributed nothing — on a link too slow to finish a chunk
+    /// inside the timeout, every stream reported zero.
+    private final class StreamProbe: NSObject, URLSessionDataDelegate, @unchecked Sendable {
+        enum Direction { case download, upload }
+
+        private let counter: Counter
+        private let direction: Direction
+        private let onProgress: @Sendable (Double) -> Void
+        private let lock = NSLock()
+        private var waiters: [Int: CheckedContinuation<Int, Never>] = [:]
+        private var codes: [Int: Int] = [:]
+
+        init(counter: Counter, direction: Direction, onProgress: @escaping @Sendable (Double) -> Void) {
+            self.counter = counter
+            self.direction = direction
+            self.onProgress = onProgress
+        }
+
+        /// Runs `task` to completion and returns its HTTP status, or 0 if it was
+        /// cancelled or never answered.
+        func run(_ task: URLSessionTask) async -> Int {
+            await withCheckedContinuation { continuation in
+                lock.lock()
+                waiters[task.taskIdentifier] = continuation
+                lock.unlock()
+                task.resume()
+            }
+        }
+
+        func urlSession(
+            _ session: URLSession,
+            dataTask: URLSessionDataTask,
+            didReceive response: URLResponse,
+            completionHandler: @escaping (URLSession.ResponseDisposition) -> Void
+        ) {
+            let code = (response as? HTTPURLResponse)?.statusCode ?? 0
+            lock.lock()
+            codes[dataTask.taskIdentifier] = code
+            lock.unlock()
+            completionHandler(code == 200 ? .allow : .cancel)
+        }
+
+        func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+            guard direction == .download else { return }
+            onProgress(counter.add(data.count))
+        }
+
+        func urlSession(
+            _ session: URLSession,
+            task: URLSessionTask,
+            didSendBodyData bytesSent: Int64,
+            totalBytesSent: Int64,
+            totalBytesExpectedToSend: Int64
+        ) {
+            guard direction == .upload else { return }
+            onProgress(counter.add(Int(bytesSent)))
+        }
+
+        func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+            lock.lock()
+            let code = codes.removeValue(forKey: task.taskIdentifier) ?? 0
+            let waiter = waiters.removeValue(forKey: task.taskIdentifier)
+            lock.unlock()
+            waiter?.resume(returning: code)
+        }
+    }
+
+    /// Cancels every in-flight transfer the moment the clock or the data cap
+    /// runs out — mid-chunk included, so the cap actually holds on a metered
+    /// connection.
+    private static func stopper(session: URLSession, counter: Counter, cap: Int, deadline: Date) -> Task<Void, Never> {
+        Task {
+            while Date() < deadline, counter.byteTotal < cap {
+                if (try? await Task.sleep(nanoseconds: 100_000_000)) == nil { return }
+            }
+            session.invalidateAndCancel()
+        }
+    }
+
+    // MARK: - Server
+
+    /// Cloudflare is anycast: a request already lands on the PoP with the
+    /// shortest path to the device, so there is no server to pick. This only
+    /// reports which one answered, the way speedtest.net names the server it
+    /// chose.
+    static func server(timeout: TimeInterval = 6) async -> String? {
+        let config = URLSessionConfiguration.ephemeral
+        config.timeoutIntervalForRequest = timeout
+        config.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+        let session = URLSession(configuration: config)
+        defer { session.finishTasksAndInvalidate() }
+
+        guard let url = URL(string: traceURL),
+              let (data, _) = try? await session.data(from: url),
+              let body = String(data: data, encoding: .utf8)
+        else { return nil }
+
+        var colo: String?
+        var country: String?
+        for line in body.split(separator: "\n") {
+            let pair = line.split(separator: "=", maxSplits: 1)
+            guard pair.count == 2 else { continue }
+            if pair[0] == "colo" { colo = String(pair[1]) }
+            if pair[0] == "loc" { country = String(pair[1]) }
+        }
+        guard let colo, !colo.isEmpty else { return nil }
+        guard let country, !country.isEmpty else { return colo }
+        return "\(colo) · \(country)"
     }
 
     // MARK: - Ping / jitter
@@ -54,7 +197,9 @@ enum InternetSpeedTester {
         for i in 0..<samples {
             guard let url = URL(string: downBase + "0") else { continue }
             let t0 = Date()
-            do { _ = try await session.data(from: url) } catch { continue }
+            guard let (_, response) = try? await session.data(from: url),
+                  (response as? HTTPURLResponse)?.statusCode == 200
+            else { continue }
             let dt = Date().timeIntervalSince(t0) * 1000
             if i >= 3 { lat.append(dt) } // discard warmup
         }
@@ -71,31 +216,37 @@ enum InternetSpeedTester {
     // MARK: - Download
 
     static func download(timeout: TimeInterval = 15, onProgress: @escaping @Sendable (Double) -> Void) async -> Double {
-        let cap = 120_000_000, streams = 4, chunk = 12_000_000
-        let counter = Counter()
+        let cap = 100_000_000, streams = 4
+        let counter = Counter(warmup: 0.7)
         let deadline = Date().addingTimeInterval(10)
         let config = URLSessionConfiguration.ephemeral
         config.timeoutIntervalForRequest = timeout
         config.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
-        let session = URLSession(configuration: config)
-        defer { session.finishTasksAndInvalidate() }
+        let probe = StreamProbe(counter: counter, direction: .download, onProgress: onProgress)
+        let session = URLSession(configuration: config, delegate: probe, delegateQueue: nil)
+        let stop = stopper(session: session, counter: counter, cap: cap, deadline: deadline)
+        defer {
+            stop.cancel()
+            session.invalidateAndCancel()
+        }
 
         await withTaskGroup(of: Void.self) { group in
             for _ in 0..<streams {
                 group.addTask {
-                    while Date() < deadline {
-                        if await counter.byteTotal >= cap { break }
-                        guard let url = URL(string: downBase + String(chunk)) else { break }
-                        do {
-                            let (data, _) = try await session.data(from: url)
-                            let mbps = await counter.add(data.count)
-                            onProgress(mbps)
-                        } catch { break }
+                    var size = 0
+                    var errors = 0
+                    while Date() < deadline, counter.byteTotal < cap, size < downSizes.count, errors < 3 {
+                        guard let url = URL(string: downBase + String(downSizes[size])) else { break }
+                        switch await probe.run(session.dataTask(with: url)) {
+                        case 200: errors = 0
+                        case 0: errors += 1 // cancelled by the stopper, or no reply
+                        default: size += 1 // Cloudflare refused this size
+                        }
                     }
                 }
             }
         }
-        return await counter.finalMbps()
+        return counter.finalMbps()
     }
 
     // MARK: - Upload
@@ -103,30 +254,34 @@ enum InternetSpeedTester {
     static func upload(timeout: TimeInterval = 15, onProgress: @escaping @Sendable (Double) -> Void) async -> Double {
         let cap = 50_000_000, streams = 3, chunk = 8_000_000
         let payload = Data(count: chunk)
-        let counter = Counter()
+        let counter = Counter(warmup: 0.5)
         let deadline = Date().addingTimeInterval(8)
         let config = URLSessionConfiguration.ephemeral
         config.timeoutIntervalForRequest = timeout
-        let session = URLSession(configuration: config)
-        defer { session.finishTasksAndInvalidate() }
+        let probe = StreamProbe(counter: counter, direction: .upload, onProgress: onProgress)
+        let session = URLSession(configuration: config, delegate: probe, delegateQueue: nil)
+        let stop = stopper(session: session, counter: counter, cap: cap, deadline: deadline)
+        defer {
+            stop.cancel()
+            session.invalidateAndCancel()
+        }
         guard let url = URL(string: upURL) else { return 0 }
 
         await withTaskGroup(of: Void.self) { group in
             for _ in 0..<streams {
                 group.addTask {
-                    while Date() < deadline {
-                        if await counter.byteTotal >= cap { break }
+                    var errors = 0
+                    while Date() < deadline, counter.byteTotal < cap, errors < 3 {
                         var req = URLRequest(url: url)
                         req.httpMethod = "POST"
-                        do {
-                            _ = try await session.upload(for: req, from: payload)
-                            let mbps = await counter.add(chunk)
-                            onProgress(mbps)
-                        } catch { break }
+                        switch await probe.run(session.uploadTask(with: req, from: payload)) {
+                        case 200: errors = 0
+                        default: errors += 1
+                        }
                     }
                 }
             }
         }
-        return await counter.finalMbps()
+        return counter.finalMbps()
     }
 }

@@ -9,6 +9,9 @@ final class MockDNSApplier: DNSApplying {
     private(set) var appliedProfiles: [DNSProfile] = []
     private(set) var disableCount = 0
     var applyError: Error?
+    /// What the system reports after a profile is applied. Defaults to the
+    /// case a first-time user hits: installed, but not yet enabled in Settings.
+    var statusAfterApply: DNSStatus = .installedNotEnabled
 
     func applyProfile(_ profile: DNSProfile) async throws {
         if let applyError { throw applyError }
@@ -21,6 +24,7 @@ final class MockDNSApplier: DNSApplying {
 
     func testProfileLatency(_ profile: DNSProfile) async -> Double? { 12.3 }
     func currentServersDisplay() async -> String { "1.1.1.1" }
+    func status() async -> DNSStatus { appliedProfiles.isEmpty ? .off : statusAfterApply }
 }
 
 // MARK: - ProfileEntity mapping
@@ -37,6 +41,9 @@ struct ProfileEntityTests {
 
 // MARK: - DNSApplyService seam
 
+/// Serialized: every case here writes the process-wide `WidgetStateStore`, so
+/// running them in parallel would let one case read another's state.
+@Suite(.serialized)
 @MainActor
 struct DNSApplyServiceTests {
     @Test func applyForwardsToManager() async throws {
@@ -60,5 +67,21 @@ struct DNSApplyServiceTests {
         await #expect(throws: DNSError.self) {
             try await DNSApplyService.apply(profile, using: mock)
         }
+    }
+
+    /// Applying a profile the user has not enabled in Settings must not leave
+    /// the widget claiming protection the device isn't providing.
+    @Test func widgetIsInactiveWhenProfileInstalledButNotEnabled() async throws {
+        let mock = MockDNSApplier()
+        mock.statusAfterApply = .installedNotEnabled
+        try await DNSApplyService.apply(DNSProfile(name: "Quad9", servers: ["9.9.9.9"]), using: mock)
+        #expect(WidgetStateStore.load().isActive == false)
+    }
+
+    @Test func widgetIsActiveOnceTheProfileIsEnabled() async throws {
+        let mock = MockDNSApplier()
+        mock.statusAfterApply = .active
+        try await DNSApplyService.apply(DNSProfile(name: "Quad9", servers: ["9.9.9.9"]), using: mock)
+        #expect(WidgetStateStore.load().isActive == true)
     }
 }

@@ -100,6 +100,14 @@ struct SpeedTestView: View {
                 }
             }
             .frame(width: 220, height: 220)
+
+            if let server = store.server {
+                HStack(spacing: 5) {
+                    Image(systemName: "server.rack").font(.caption2)
+                    Text(server).font(.caption.monospacedDigit())
+                }
+                .foregroundStyle(.secondary)
+            }
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 8)

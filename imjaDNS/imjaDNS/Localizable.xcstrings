@@ -394,7 +394,20 @@
       }
     },
     "Disconnect DNS" : {
-
+      "localizations" : {
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Αποσύνδεση DNS"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shkëput DNS"
+          }
+        }
+      }
     },
     "DNS" : {
 
@@ -479,7 +492,20 @@
 
     },
     "Enable DNS Configuration" : {
-
+      "localizations" : {
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ενεργοποίηση διαμόρφωσης DNS"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktivizo konfigurimin DNS"
+          }
+        }
+      }
     },
     "Enable imjaDNS in system settings" : {
 
@@ -508,7 +534,20 @@
 
     },
     "Error" : {
-
+      "localizations" : {
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Σφάλμα"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gabim"
+          }
+        }
+      }
     },
     "Everything looks good" : {
       "extractionState" : "stale",
@@ -726,7 +765,20 @@
       }
     },
     "Later" : {
-
+      "localizations" : {
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Αργότερα"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Më vonë"
+          }
+        }
+      }
     },
     "Leaderboard" : {
       "localizations" : {
@@ -1006,7 +1058,20 @@
       }
     },
     "Protected" : {
-
+      "localizations" : {
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Προστατευμένο"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I mbrojtur"
+          }
+        }
+      }
     },
     "Provider" : {
 
@@ -1522,7 +1587,20 @@
 
     },
     "To activate DNS profiles, go to:\n\nSettings → General → VPN & Device Management → DNS\n\nThen select imjaDNS." : {
-
+      "localizations" : {
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Για να ενεργοποιήσετε τα προφίλ DNS, μεταβείτε στις:\n\nΡυθμίσεις → Γενικά → VPN & Διαχείριση συσκευής → DNS\n\nΈπειτα επιλέξτε imjaDNS."
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Për të aktivizuar profilet DNS, shkoni te:\n\nCilësimet → Të përgjithshme → VPN dhe menaxhimi i pajisjes → DNS\n\nMë pas zgjidhni imjaDNS."
+          }
+        }
+      }
     },
     "Toggle imjaDNS" : {
 
@@ -1554,7 +1632,20 @@
       }
     },
     "Unprotected" : {
-
+      "localizations" : {
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Απροστάτευτο"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I pambrojtur"
+          }
+        }
+      }
     },
     "Upload" : {
       "localizations" : {
@@ -1668,6 +1759,118 @@
     },
     "Your active DNS is %@." : {
 
+    },
+    "Not Enabled" : {
+      "localizations" : {
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Μη ενεργοποιημένο"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I paaktivizuar"
+          }
+        }
+      }
+    },
+    "Loading..." : {
+      "localizations" : {
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Φόρτωση…"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Po ngarkohet…"
+          }
+        }
+      }
+    },
+    "System Default" : {
+      "localizations" : {
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Προεπιλογή συστήματος"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parazgjedhja e sistemit"
+          }
+        }
+      }
+    },
+    "Cellular" : {
+      "localizations" : {
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Κινητό δίκτυο"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rrjet celular"
+          }
+        }
+      }
+    },
+    "Unknown" : {
+      "localizations" : {
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Άγνωστο"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E panjohur"
+          }
+        }
+      }
+    },
+    "No Connection" : {
+      "localizations" : {
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Χωρίς σύνδεση"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pa lidhje"
+          }
+        }
+      }
+    },
+    "Your DNS profile is installed but switched off, so it isn't protecting you yet. Turn it on in Settings → General → VPN & Device Management → DNS." : {
+      "localizations" : {
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Το προφίλ DNS σας έχει εγκατασταθεί αλλά είναι απενεργοποιημένο, οπότε δεν σας προστατεύει ακόμη. Ενεργοποιήστε το από τις Ρυθμίσεις → Γενικά → VPN & Διαχείριση συσκευής → DNS."
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profili juaj DNS është i instaluar por i çaktivizuar, prandaj ende nuk ju mbron. Aktivizoje te Cilësimet → Të përgjithshme → VPN dhe menaxhimi i pajisjes → DNS."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

@@ -1,13 +1,20 @@
 import ComposableArchitecture
 import Foundation
+import UIKit
 import WidgetKit
 
 @Reducer
 struct HomeFeature {
+    private enum CancelID { case statusWatch }
+
     @ObservableState
     struct State: Equatable {
         var currentDNS: String = "Loading..."
-        var isCustomDNSActive: Bool = false
+        var dnsStatus: DNSStatus = .off
+        /// The servers are actually resolving traffic.
+        var isCustomDNSActive: Bool { dnsStatus == .active }
+        /// A profile exists on the device, whether or not it is switched on.
+        var hasProfileInstalled: Bool { dnsStatus != .off }
         var networkType: String = "Checking..."
         var networkIcon: String = "wifi"
         var activeProfileName: String? = nil
@@ -21,7 +28,7 @@ struct HomeFeature {
     enum Action: Equatable {
         case onAppear
         case refreshDNSStatus
-        case dnsStatusLoaded(String, Bool)
+        case dnsStatusLoaded(String, DNSStatus)
         case networkUpdated(String, String)
         case disconnectDNS
         case dnsDisconnected
@@ -37,33 +44,61 @@ struct HomeFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                return .run { send in
-                    let display = await DNSManager.shared.currentServersDisplay()
-                    let active = await DNSManager.shared.isCustomDNSActive()
-                    await send(.dnsStatusLoaded(display, active))
+                return .merge(
+                    .run { send in
+                        let display = await DNSManager.shared.currentServersDisplay()
+                        let status = await DNSManager.shared.status()
+                        await send(.dnsStatusLoaded(display, status))
 
-                    let hasShown = await PersistenceManager.shared.hasShownDNSAlert
-                    if !hasShown {
-                        await send(.toggleFirstTimeAlert(true))
-                        await PersistenceManager.shared.markDNSAlertShown()
+                        let hasShown = await PersistenceManager.shared.hasShownDNSAlert
+                        if !hasShown {
+                            await send(.toggleFirstTimeAlert(true))
+                            await PersistenceManager.shared.markDNSAlertShown()
+                        }
+                    },
+                    .run { send in
+                        // The profile is switched on and off in Settings, out of
+                        // our reach, so a single read on appear goes stale the
+                        // moment the user leaves. Re-read whenever the system
+                        // reports a change and whenever we come back forward.
+                        await withTaskGroup(of: Void.self) { group in
+                            group.addTask {
+                                for await _ in NotificationCenter.default.notifications(named: .dnsConfigurationDidChange) {
+                                    await send(.refreshDNSStatus)
+                                }
+                            }
+                            group.addTask {
+                                for await _ in NotificationCenter.default.notifications(named: UIApplication.willEnterForegroundNotification) {
+                                    await send(.refreshDNSStatus)
+                                }
+                            }
+                        }
                     }
-
-                    if active {
-                        await send(.testLatency)
-                    }
-                }
+                    .cancellable(id: CancelID.statusWatch, cancelInFlight: true)
+                )
 
             case .refreshDNSStatus:
                 return .run { send in
                     let display = await DNSManager.shared.currentServersDisplay()
-                    let active = await DNSManager.shared.isCustomDNSActive()
-                    await send(.dnsStatusLoaded(display, active))
+                    let status = await DNSManager.shared.status()
+                    await send(.dnsStatusLoaded(display, status))
                 }
 
-            case let .dnsStatusLoaded(dns, active):
+            case let .dnsStatusLoaded(dns, status):
+                let wasActive = state.dnsStatus == .active
                 state.currentDNS = dns
-                state.isCustomDNSActive = active
-                return .none
+                state.dnsStatus = status
+
+                guard status == .active else {
+                    // A reading from a resolver we are no longer using would be
+                    // a stale claim, so drop it.
+                    state.latencyMs = nil
+                    return .none
+                }
+                // Newly active — usually because the user just enabled us in
+                // Settings — so the badge has nothing to show until we measure.
+                guard !wasActive, !state.isTestingLatency else { return .none }
+                return .send(.testLatency)
 
             case let .networkUpdated(type, icon):
                 state.networkType = type
@@ -84,7 +119,7 @@ struct HomeFeature {
 
             case .dnsDisconnected:
                 state.currentDNS = "System Default"
-                state.isCustomDNSActive = false
+                state.dnsStatus = .off
                 state.activeProfileName = nil
                 state.latencyMs = nil
                 return .none

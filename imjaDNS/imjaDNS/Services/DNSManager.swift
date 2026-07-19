@@ -25,6 +25,26 @@ enum DNSError: LocalizedError {
     }
 }
 
+/// What the system is actually doing with our configuration. Installing a
+/// profile is not enough to make it take effect: `NEDNSSettingsManager.isEnabled`
+/// is read-only, and only the user can switch the profile on, in Settings.
+/// Until they do, the servers are installed but iOS still resolves through the
+/// system default.
+enum DNSStatus: Equatable, Sendable {
+    /// Nothing installed — the system resolver is in use.
+    case off
+    /// Installed, but not switched on by the user, so it is not in effect.
+    case installedNotEnabled
+    /// Installed and in effect.
+    case active
+}
+
+extension Notification.Name {
+    /// Posted when the DNS configuration changes — including when the user
+    /// enables or disables the profile from Settings, outside the app.
+    static let dnsConfigurationDidChange = NSNotification.Name.NEDNSSettingsConfigurationDidChange
+}
+
 @MainActor
 final class DNSManager {
     static let shared = DNSManager()
@@ -54,9 +74,25 @@ final class DNSManager {
         return servers.isEmpty ? "System Default" : servers.joined(separator: ", ")
     }
 
+    /// Whether our DNS is installed, and whether the system is honouring it.
+    func status() async -> DNSStatus {
+        let mgr = NEDNSSettingsManager.shared()
+        do {
+            try await mgr.loadFromPreferences()
+        } catch {
+            log.error("Failed to load DNS config: \(error.localizedDescription, privacy: .public)")
+            return .off
+        }
+
+        guard let settings = mgr.dnsSettings, !settings.servers.isEmpty else { return .off }
+        return mgr.isEnabled ? .active : .installedNotEnabled
+    }
+
+    /// True only when the servers are actually resolving traffic. A profile the
+    /// user has not enabled in Settings is installed but inert, so it does not
+    /// count as active.
     func isCustomDNSActive() async -> Bool {
-        let servers = await currentServers()
-        return !servers.isEmpty
+        await status() == .active
     }
 
     /// When a profile's DNS should be active. `.always` applies system-wide;
@@ -170,10 +206,18 @@ final class DNSManager {
             throw DNSError.loadFailed(error)
         }
 
-        mgr.dnsSettings = nil
+        // Already on the system resolver — removing again would fail.
+        guard mgr.dnsSettings != nil else {
+            log.info("No custom DNS installed, nothing to disable")
+            return
+        }
 
         do {
-            try await mgr.saveToPreferences()
+            // `saveToPreferences` rejects a manager whose `dnsSettings` is nil
+            // ("configuration is invalid: Missing settings"), so clearing the
+            // settings and saving cannot remove a profile — the configuration
+            // itself has to go.
+            try await mgr.removeFromPreferences()
             log.info("Custom DNS disabled, reverted to system default")
         } catch {
             throw DNSError.saveFailed(error)

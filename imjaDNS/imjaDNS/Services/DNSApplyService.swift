@@ -9,6 +9,7 @@ protocol DNSApplying {
     func disableCustomDNS() async throws
     func testProfileLatency(_ profile: DNSProfile) async -> Double?
     func currentServersDisplay() async -> String
+    func status() async -> DNSStatus
 }
 
 extension DNSManager: DNSApplying {}
@@ -36,8 +37,12 @@ enum DNSApplyService {
             servers: profile.servers,
             action: .applied
         ))
+        // Saving a profile does not put it in effect — the user still has to
+        // enable it in Settings. Ask the system rather than assuming, so the
+        // widget doesn't claim protection the device isn't providing.
+        let isActive = await manager.status() == .active
         WidgetStateStore.save(WidgetState(
-            isActive: true,
+            isActive: isActive,
             profileName: profile.name,
             categoryIcon: profile.category.icon,
             gradient: profile.category.gradient,
@@ -81,8 +86,9 @@ enum DNSApplyService {
             servers: profile.servers,
             action: .applied
         ))
+        let isActive = await DNSManager.shared.status() == .active
         WidgetStateStore.save(WidgetState(
-            isActive: true,
+            isActive: isActive,
             profileName: profile.name,
             categoryIcon: profile.category.icon,
             gradient: profile.category.gradient,
