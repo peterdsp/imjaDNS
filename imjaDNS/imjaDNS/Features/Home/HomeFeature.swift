@@ -23,12 +23,17 @@ struct HomeFeature {
         var errorMessage: String? = nil
         var latencyMs: Double? = nil
         var isTestingLatency: Bool = false
+
+        // Dashboard cards
+        var lastSpeedResult: InternetSpeedResult? = nil
+        var recentActivity: [ConnectionLogEntry] = []
     }
 
     enum Action: Equatable {
         case onAppear
         case refreshDNSStatus
         case dnsStatusLoaded(String, DNSStatus)
+        case dashboardLoaded(InternetSpeedResult?, [ConnectionLogEntry])
         case networkUpdated(String, String)
         case disconnectDNS
         case dnsDisconnected
@@ -49,6 +54,10 @@ struct HomeFeature {
                         let display = await DNSManager.shared.currentServersDisplay()
                         let status = await DNSManager.shared.status()
                         await send(.dnsStatusLoaded(display, status))
+                        await send(.dashboardLoaded(
+                            await PersistenceManager.shared.loadInternetSpeedResult(),
+                            await Self.recentActivity()
+                        ))
 
                         let hasShown = await PersistenceManager.shared.hasShownDNSAlert
                         if !hasShown {
@@ -82,7 +91,16 @@ struct HomeFeature {
                     let display = await DNSManager.shared.currentServersDisplay()
                     let status = await DNSManager.shared.status()
                     await send(.dnsStatusLoaded(display, status))
+                    await send(.dashboardLoaded(
+                        await PersistenceManager.shared.loadInternetSpeedResult(),
+                        await Self.recentActivity()
+                    ))
                 }
+
+            case let .dashboardLoaded(speed, activity):
+                state.lastSpeedResult = speed
+                state.recentActivity = activity
+                return .none
 
             case let .dnsStatusLoaded(dns, status):
                 let wasActive = state.dnsStatus == .active
@@ -163,5 +181,12 @@ struct HomeFeature {
                 return .none
             }
         }
+    }
+
+    /// The three most recent connection-log entries, newest first, for the
+    /// dashboard's activity card.
+    private static func recentActivity() async -> [ConnectionLogEntry] {
+        let log = await PersistenceManager.shared.loadConnectionLog()
+        return Array(log.suffix(3).reversed())
     }
 }

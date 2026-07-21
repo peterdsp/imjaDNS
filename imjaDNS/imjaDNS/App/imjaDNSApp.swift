@@ -13,11 +13,17 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
 }
 
+/// The five root tabs, so features (e.g. Home dashboard cards) can switch tabs.
+enum AppTab: Hashable {
+    case dashboard, profiles, speedTest, log, settings
+}
+
 @main
 struct imjaDNSApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
     @State private var hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+    @State private var selectedTab: AppTab = .dashboard
 
     private let homeStore = Store(initialState: HomeFeature.State()) {
         HomeFeature()
@@ -63,9 +69,9 @@ struct imjaDNSApp: App {
     }
 
     private var mainTabView: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             NavigationStack {
-                HomeView(store: homeStore)
+                HomeView(store: homeStore, selectedTab: $selectedTab)
                     .toolbar {
                         ToolbarItem(placement: .topBarTrailing) {
                             NavigationLink {
@@ -79,6 +85,7 @@ struct imjaDNSApp: App {
             .tabItem {
                 Label("Dashboard", systemImage: "shield.checkered")
             }
+            .tag(AppTab.dashboard)
 
             NavigationStack {
                 DNSProfileView(store: profileStore)
@@ -95,6 +102,7 @@ struct imjaDNSApp: App {
             .tabItem {
                 Label("Profiles", systemImage: "list.bullet.rectangle.fill")
             }
+            .tag(AppTab.profiles)
 
             NavigationStack {
                 SpeedTestView(store: speedTestStore)
@@ -111,6 +119,7 @@ struct imjaDNSApp: App {
             .tabItem {
                 Label("Speed Test", systemImage: "gauge.with.dots.needle.67percent")
             }
+            .tag(AppTab.speedTest)
 
             NavigationStack {
                 ConnectionLogView(store: logStore)
@@ -118,6 +127,7 @@ struct imjaDNSApp: App {
             .tabItem {
                 Label("Log", systemImage: "clock.fill")
             }
+            .tag(AppTab.log)
 
             NavigationStack {
                 SettingsView(store: settingsStore)
@@ -134,6 +144,7 @@ struct imjaDNSApp: App {
             .tabItem {
                 Label("Settings", systemImage: "gearshape.fill")
             }
+            .tag(AppTab.settings)
         }
         .tint(Color(hex: "00D2FF"))
         .onAppear {
