@@ -91,6 +91,29 @@ imjaDNS includes 100+ automated tests:
 4. Build and run on a device or simulator
 5. After applying a DNS profile, go to **Settings > VPN & Device Management > DNS** and select **imjaDNS**
 
+### Troubleshooting: `Unable to find module dependency: 'SwiftSyntax'`
+
+If a build fails with `SwiftSyntax` / `SwiftCompilerPlugin` "module dependency"
+errors, or a warning that a prebuilt macro module is *"incompatible with this
+Swift compiler: SDK does not match"*, Xcode's **prebuilt swift-syntax macros**
+were built against a different SDK than the one installed (common when the macOS
+version is newer than Xcode's bundled SDK). Force the macros to build from source:
+
+```sh
+defaults write com.apple.dt.Xcode IDEPackageEnablePrebuilts -bool NO
+# then wipe the stale prebuilts and rebuild:
+rm -rf ~/Library/Developer/Xcode/DerivedData/imjaDNS-*
+```
+
+This is a one-time, machine-level Xcode preference; the first clean build after
+it is slower (swift-syntax compiles from source) and then caches. Command-line /
+CI builds also need `-skipMacroValidation` to auto-trust the macros headlessly:
+
+```sh
+xcodebuild -project imjaDNS/imjaDNS.xcodeproj -scheme imjaDNS \
+  -destination 'generic/platform=iOS Simulator' -skipMacroValidation build
+```
+
 ---
 
 ## Privacy
