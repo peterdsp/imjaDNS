@@ -22,6 +22,7 @@ actor PersistenceManager {
         static let hasShownDNSAlert = "hasShownDNSAlert"
         static let selectedCategory = "selectedCategory"
         static let speedTestResults = "speedTestResults"
+        static let internetSpeedResult = "internetSpeedResult"
         static let automationRules = "automationRules"
         static let cellularDNSEnabled = "cellularDNSEnabled"
         static let cellularDNSProfileID = "cellularDNSProfileID"
@@ -30,8 +31,8 @@ actor PersistenceManager {
         static let migratable = [
             customProfiles, favoriteIDs, connectionLog, activeProfileID,
             lastAppliedProfileID, lastUsedDNS, autoApplyDNS, hasCompletedOnboarding,
-            hasShownDNSAlert, selectedCategory, speedTestResults, automationRules,
-            cellularDNSEnabled, cellularDNSProfileID
+            hasShownDNSAlert, selectedCategory, speedTestResults, internetSpeedResult,
+            automationRules, cellularDNSEnabled, cellularDNSProfileID
         ]
     }
 
@@ -118,6 +119,21 @@ actor PersistenceManager {
             return []
         }
         return results
+    }
+
+    // MARK: - Internet Speed Result (latest snapshot)
+
+    func saveInternetSpeedResult(_ result: InternetSpeedResult) {
+        guard let data = try? encoder.encode(result) else { return }
+        defaults.set(data, forKey: Keys.internetSpeedResult)
+    }
+
+    func loadInternetSpeedResult() -> InternetSpeedResult? {
+        guard let data = defaults.data(forKey: Keys.internetSpeedResult),
+              let result = try? decoder.decode(InternetSpeedResult.self, from: data) else {
+            return nil
+        }
+        return result
     }
 
     // MARK: - Active Profile

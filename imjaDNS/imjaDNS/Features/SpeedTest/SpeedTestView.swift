@@ -3,6 +3,7 @@ import ComposableArchitecture
 
 struct SpeedTestView: View {
     @Bindable var store: StoreOf<SpeedTestFeature>
+    @State private var selectedScenario: Scenario?
 
     var body: some View {
         ScrollView {
@@ -35,6 +36,7 @@ struct SpeedTestView: View {
         .background { AnimatedMeshBackground() }
         .navigationTitle("Speed Test")
         .onAppear { store.send(.onAppear) }
+        .sheet(item: $selectedScenario) { scenarioDetail($0) }
     }
 
     // MARK: - Internet bandwidth test
@@ -60,11 +62,14 @@ struct SpeedTestView: View {
         .tint(Color(hex: "00D2FF"))
         .disabled(store.isRunningInternet)
 
-        if !store.scenarios.isEmpty {
-            VStack(alignment: .leading, spacing: 12) {
-                SectionHeader("Real-world scenarios", icon: "square.grid.2x2.fill")
-                ForEach(store.scenarios) { scenarioRow($0) }
+        VStack(alignment: .leading, spacing: 12) {
+            SectionHeader("Real-world scenarios", icon: "square.grid.2x2.fill")
+            if !hasResult {
+                Text("Tap any activity to see what it needs — run a test to check if your connection handles it.")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
             }
+            ForEach(InternetScenarios.catalog) { scenarioRow($0) }
         }
 
         Text("Measured via Cloudflare. Guidance, not a guarantee — real performance depends on your devices and Wi-Fi. Only throwaway test data leaves your device.")
@@ -123,25 +128,168 @@ struct SpeedTestView: View {
         }
     }
 
-    private func scenarioRow(_ s: ScenarioResult) -> some View {
-        GlassCard {
-            HStack(spacing: 12) {
-                Image(systemName: s.icon)
-                    .font(.title3)
-                    .foregroundStyle(ratingColor(s.rating))
-                    .frame(width: 28)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(LocalizedStringKey(s.name)).font(.subheadline.weight(.semibold))
-                    Text(LocalizedStringKey(s.detail)).font(.caption).foregroundStyle(.secondary)
+    /// Measured values only exist once a test has run.
+    private var hasResult: Bool { store.downloadMbps != nil }
+
+    /// This scenario's rating against the measured connection, or nil if no test
+    /// has run yet.
+    private func rating(for s: Scenario) -> SpeedRating? {
+        guard let d = store.downloadMbps, let u = store.uploadMbps,
+              let p = store.pingMs, let j = store.jitterMs else { return nil }
+        return s.rating(down: d, up: u, ping: p, jitter: j)
+    }
+
+    private func iconColor(_ r: SpeedRating?) -> Color {
+        r.map(ratingColor) ?? Color(hex: "00D2FF")
+    }
+
+    private func scenarioRow(_ s: Scenario) -> some View {
+        let r = rating(for: s)
+        return Button {
+            selectedScenario = s
+        } label: {
+            GlassCard {
+                HStack(spacing: 12) {
+                    Image(systemName: s.icon)
+                        .font(.title3)
+                        .foregroundStyle(iconColor(r))
+                        .frame(width: 28)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(LocalizedStringKey(s.name)).font(.subheadline.weight(.semibold))
+                        Text(LocalizedStringKey(s.detail)).font(.caption).foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    if let r {
+                        Text(LocalizedStringKey(ratingLabel(r)))
+                            .font(.caption.weight(.bold))
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                            .background(ratingColor(r).opacity(0.16), in: Capsule())
+                            .foregroundStyle(ratingColor(r))
+                    } else {
+                        Image(systemName: "chevron.right")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(.tertiary)
+                    }
                 }
-                Spacer()
-                Text(LocalizedStringKey(ratingLabel(s.rating)))
-                    .font(.caption.weight(.bold))
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                    .background(ratingColor(s.rating).opacity(0.16), in: Capsule())
-                    .foregroundStyle(ratingColor(s.rating))
             }
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - Scenario detail
+
+    private func scenarioDetail(_ s: Scenario) -> some View {
+        let r = rating(for: s)
+        return NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    HStack(spacing: 14) {
+                        Image(systemName: s.icon)
+                            .font(.system(size: 40))
+                            .foregroundStyle(iconColor(r))
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(LocalizedStringKey(s.name)).font(.title2.weight(.bold))
+                            Text(LocalizedStringKey(s.detail)).font(.subheadline).foregroundStyle(.secondary)
+                        }
+                    }
+
+                    GlassCard {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Label("What it needs", systemImage: "checklist")
+                                .font(.subheadline.weight(.semibold))
+                            Text(LocalizedStringKey(s.requirement))
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+
+                    // Run a real test for THIS scenario, then judge it right here.
+                    Button {
+                        store.send(.startInternetTest)
+                    } label: {
+                        HStack(spacing: 8) {
+                            if store.isRunningInternet {
+                                ProgressView().tint(.white)
+                            } else {
+                                Image(systemName: "gauge.with.dots.needle.67percent")
+                            }
+                            Text(LocalizedStringKey(store.isRunningInternet ? "Testing…" : (r == nil ? "Run this test" : "Test again")))
+                                .fontWeight(.semibold)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(AppTheme.accentGradient)
+                        .foregroundStyle(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: AppTheme.smallCornerRadius, style: .continuous))
+                    }
+                    .disabled(store.isRunningInternet)
+
+                    if store.isRunningInternet {
+                        GlassCard {
+                            HStack {
+                                Text(LocalizedStringKey(phaseLabel))
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundStyle(Color(hex: "00D2FF"))
+                                    .textCase(.uppercase)
+                                Spacer()
+                                Text("\(fmtLive(store.liveMbps)) Mbps")
+                                    .font(.caption.monospacedDigit())
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    } else if let r {
+                        GlassCard {
+                            VStack(alignment: .leading, spacing: 12) {
+                                HStack {
+                                    Text("Your connection").font(.subheadline.weight(.semibold))
+                                    Spacer()
+                                    Text(LocalizedStringKey(ratingLabel(r)))
+                                        .font(.caption.weight(.bold))
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 4)
+                                        .background(ratingColor(r).opacity(0.16), in: Capsule())
+                                        .foregroundStyle(ratingColor(r))
+                                }
+                                compareRow("Download", have: store.downloadMbps, need: s.needDown, unit: "Mbps")
+                                if s.needUp > 0 {
+                                    compareRow("Upload", have: store.uploadMbps, need: s.needUp, unit: "Mbps")
+                                }
+                                if s.maxPing.isFinite {
+                                    compareRow("Ping", have: store.pingMs, need: s.maxPing, unit: "ms", lowerIsBetter: true)
+                                }
+                            }
+                        }
+                    }
+                }
+                .padding(20)
+            }
+            .background { AnimatedMeshBackground() }
+            .navigationTitle("Scenario")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") { selectedScenario = nil }
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
+    }
+
+    private func compareRow(_ label: LocalizedStringKey, have: Double?, need: Double, unit: String, lowerIsBetter: Bool = false) -> some View {
+        let ok = have.map { lowerIsBetter ? $0 <= need : $0 >= need } ?? false
+        let haveText = have.map { String(Int($0.rounded())) } ?? "–"
+        return HStack(spacing: 8) {
+            Image(systemName: ok ? "checkmark.circle.fill" : "xmark.circle.fill")
+                .foregroundStyle(ok ? Color(hex: "38EF7D") : Color(hex: "FC466B"))
+            Text(label).font(.subheadline)
+            Spacer()
+            Text("\(haveText) \(unit)")
+                .font(.subheadline.weight(.semibold).monospacedDigit())
+            Text(lowerIsBetter ? "(need ≤\(Int(need)))" : "(need ≥\(Int(need)))")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
         }
     }
 

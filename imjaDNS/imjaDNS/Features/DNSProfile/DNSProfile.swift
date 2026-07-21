@@ -170,6 +170,30 @@ struct SpeedTestResult: Identifiable, Codable, Equatable {
     }
 }
 
+/// The most recent internet bandwidth test, kept as a single latest snapshot
+/// so the Home dashboard can show download / upload / ping without re-running.
+struct InternetSpeedResult: Codable, Equatable {
+    var downloadMbps: Double
+    var uploadMbps: Double
+    var pingMs: Double
+    var jitterMs: Double
+    var timestamp: Date
+
+    init(
+        downloadMbps: Double,
+        uploadMbps: Double,
+        pingMs: Double,
+        jitterMs: Double,
+        timestamp: Date = .now
+    ) {
+        self.downloadMbps = downloadMbps
+        self.uploadMbps = uploadMbps
+        self.pingMs = pingMs
+        self.jitterMs = jitterMs
+        self.timestamp = timestamp
+    }
+}
+
 enum DNSValidation {
     static func isValidIPv4(_ string: String) -> Bool {
         let parts = string.split(separator: ".")

@@ -215,10 +215,19 @@ enum InternetSpeedTester {
 
     // MARK: - Download
 
-    static func download(timeout: TimeInterval = 15, onProgress: @escaping @Sendable (Double) -> Void) async -> Double {
-        let cap = 100_000_000, streams = 4
-        let counter = Counter(warmup: 0.7)
-        let deadline = Date().addingTimeInterval(10)
+    /// A sustained-throughput download. On an unmetered link the run is
+    /// governed by the clock (a ~12 s window after a 2 s TCP ramp-up) so the
+    /// reading reflects steady-state speed rather than an opening burst — on a
+    /// fast link the old 100 MB cap ended the test in ~1 s, which read high and
+    /// noisy. On cellular the cap stays tight to protect the user's data plan,
+    /// which naturally shortens the run; see [[cellular-first-quality]].
+    static func download(metered: Bool, timeout: TimeInterval = 25, onProgress: @escaping @Sendable (Double) -> Void) async -> Double {
+        let cap = metered ? 80_000_000 : 600_000_000
+        let seconds: TimeInterval = metered ? 8 : 12
+        let warmup: TimeInterval = metered ? 1.0 : 2.0
+        let streams = 4
+        let counter = Counter(warmup: warmup)
+        let deadline = Date().addingTimeInterval(seconds)
         let config = URLSessionConfiguration.ephemeral
         config.timeoutIntervalForRequest = timeout
         config.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
@@ -251,11 +260,17 @@ enum InternetSpeedTester {
 
     // MARK: - Upload
 
-    static func upload(timeout: TimeInterval = 15, onProgress: @escaping @Sendable (Double) -> Void) async -> Double {
-        let cap = 50_000_000, streams = 3, chunk = 8_000_000
+    /// The upload counterpart to `download`: clock-governed on an unmetered
+    /// link for a steady-state reading, data-capped on cellular. Uploads run a
+    /// touch shorter than downloads since the typical link is slower up.
+    static func upload(metered: Bool, timeout: TimeInterval = 25, onProgress: @escaping @Sendable (Double) -> Void) async -> Double {
+        let cap = metered ? 40_000_000 : 300_000_000
+        let seconds: TimeInterval = metered ? 6 : 10
+        let warmup: TimeInterval = metered ? 0.7 : 1.5
+        let streams = 3, chunk = 8_000_000
         let payload = Data(count: chunk)
-        let counter = Counter(warmup: 0.5)
-        let deadline = Date().addingTimeInterval(8)
+        let counter = Counter(warmup: warmup)
+        let deadline = Date().addingTimeInterval(seconds)
         let config = URLSessionConfiguration.ephemeral
         config.timeoutIntervalForRequest = timeout
         let probe = StreamProbe(counter: counter, direction: .upload, onProgress: onProgress)

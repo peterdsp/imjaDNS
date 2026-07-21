@@ -133,20 +133,23 @@ struct SpeedTestFeature {
                 return .run { send in
                     // Internet transfers need more headroom than a DNS probe.
                     let base = await SpeedProbe.adaptiveTimeout()
+                    // Cellular runs data-capped to protect the plan; Wi-Fi/
+                    // Ethernet run longer for an accurate steady-state reading.
+                    let metered = await MainActor.run { NetworkMonitor.shared.connectionType == .cellular }
                     async let colo = InternetSpeedTester.server(timeout: max(6, base))
                     let (ping, jitter) = await InternetSpeedTester.ping(timeout: max(6, base))
                     await send(.internetPing(ping, jitter))
                     await send(.internetServer(colo))
 
                     await send(.internetPhaseChanged(.download))
-                    let down = await InternetSpeedTester.download(timeout: max(12, base * 3)) { mbps in
+                    let down = await InternetSpeedTester.download(metered: metered, timeout: max(12, base * 3)) { mbps in
                         Task { await send(.internetLive(mbps)) }
                     }
                     await send(.internetDownload(down))
 
                     await send(.internetPhaseChanged(.upload))
                     await send(.internetLive(0))
-                    let up = await InternetSpeedTester.upload(timeout: max(12, base * 3)) { mbps in
+                    let up = await InternetSpeedTester.upload(metered: metered, timeout: max(12, base * 3)) { mbps in
                         Task { await send(.internetLive(mbps)) }
                     }
                     await send(.internetComplete(down: down, up: up, ping: ping, jitter: jitter))
@@ -182,7 +185,12 @@ struct SpeedTestFeature {
                 state.scenarios = InternetScenarios.evaluate(down: down, up: up, ping: ping, jitter: jitter)
                 state.internetPhase = .done
                 state.isRunningInternet = false
-                return .none
+                // Persist as the latest snapshot so the Home dashboard can show it.
+                return .run { _ in
+                    await PersistenceManager.shared.saveInternetSpeedResult(
+                        InternetSpeedResult(downloadMbps: down, uploadMbps: up, pingMs: ping, jitterMs: jitter)
+                    )
+                }
             }
         }
     }

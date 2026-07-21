@@ -230,6 +230,23 @@
         }
       }
     },
+    "Cellular" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Κινητό δίκτυο"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rrjet celular"
+          }
+        }
+      }
+    },
     "Cellular data" : {
       "localizations" : {
         "el" : {
@@ -816,6 +833,23 @@
     "Loading DNS Profiles..." : {
 
     },
+    "Loading..." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Φόρτωση…"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Po ngarkohet…"
+          }
+        }
+      }
+    },
     "Log" : {
       "localizations" : {
         "el" : {
@@ -949,6 +983,23 @@
     "No automation rules yet. Add one to switch DNS automatically based on your network or the time of day." : {
 
     },
+    "No Connection" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Χωρίς σύνδεση"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pa lidhje"
+          }
+        }
+      }
+    },
     "No DNS profile is available to enable." : {
 
     },
@@ -964,6 +1015,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ende pa histori"
+          }
+        }
+      }
+    },
+    "Not Enabled" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Μη ενεργοποιημένο"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I paaktivizuar"
           }
         }
       }
@@ -1058,6 +1126,7 @@
       }
     },
     "Protected" : {
+      "extractionState" : "stale",
       "localizations" : {
         "el" : {
           "stringUnit" : {
@@ -1485,6 +1554,23 @@
     "Syncs your custom profiles, favorites, and automation rules across your devices. No browsing or DNS query data is ever synced." : {
 
     },
+    "System Default" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Προεπιλογή συστήματος"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parazgjedhja e sistemit"
+          }
+        }
+      }
+    },
     "Tap refresh to probe every provider and find the fastest for your network right now." : {
 
     },
@@ -1631,7 +1717,25 @@
         }
       }
     },
+    "Unknown" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Άγνωστο"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E panjohur"
+          }
+        }
+      }
+    },
     "Unprotected" : {
+      "extractionState" : "stale",
       "localizations" : {
         "el" : {
           "stringUnit" : {
@@ -1759,102 +1863,6 @@
     },
     "Your active DNS is %@." : {
 
-    },
-    "Not Enabled" : {
-      "localizations" : {
-        "el" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Μη ενεργοποιημένο"
-          }
-        },
-        "sq" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "I paaktivizuar"
-          }
-        }
-      }
-    },
-    "Loading..." : {
-      "localizations" : {
-        "el" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Φόρτωση…"
-          }
-        },
-        "sq" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Po ngarkohet…"
-          }
-        }
-      }
-    },
-    "System Default" : {
-      "localizations" : {
-        "el" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Προεπιλογή συστήματος"
-          }
-        },
-        "sq" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Parazgjedhja e sistemit"
-          }
-        }
-      }
-    },
-    "Cellular" : {
-      "localizations" : {
-        "el" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Κινητό δίκτυο"
-          }
-        },
-        "sq" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rrjet celular"
-          }
-        }
-      }
-    },
-    "Unknown" : {
-      "localizations" : {
-        "el" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Άγνωστο"
-          }
-        },
-        "sq" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "E panjohur"
-          }
-        }
-      }
-    },
-    "No Connection" : {
-      "localizations" : {
-        "el" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Χωρίς σύνδεση"
-          }
-        },
-        "sq" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pa lidhje"
-          }
-        }
-      }
     },
     "Your DNS profile is installed but switched off, so it isn't protecting you yet. Turn it on in Settings → General → VPN & Device Management → DNS." : {
       "localizations" : {
