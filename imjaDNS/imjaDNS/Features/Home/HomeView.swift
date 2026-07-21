@@ -8,7 +8,7 @@ struct HomeView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 24) {
+            VStack(spacing: 12) {
                 statusSection
                 if store.isCustomDNSActive {
                     latencyCard
@@ -23,8 +23,8 @@ struct HomeView: View {
                 quickActionsSection
             }
             .padding(.horizontal, 20)
-            .padding(.top, 8)
-            .padding(.bottom, 32)
+            .padding(.top, 4)
+            .padding(.bottom, 16)
         }
         .background { AnimatedMeshBackground() }
         .navigationTitle("imjaDNS")
@@ -59,9 +59,8 @@ struct HomeView: View {
     // MARK: - Status Section
 
     private var statusSection: some View {
-        VStack(spacing: 16) {
-            StatusOrb(isActive: store.isCustomDNSActive, size: 130)
-                .padding(.top, 8)
+        VStack(spacing: 8) {
+            StatusOrb(isActive: store.isCustomDNSActive, size: 84)
 
             VStack(spacing: 6) {
                 Text(LocalizedStringKey(statusTitle))
@@ -90,7 +89,6 @@ struct HomeView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 8)
     }
 
     // MARK: - Live DNS latency
