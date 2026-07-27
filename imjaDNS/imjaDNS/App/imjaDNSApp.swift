@@ -49,6 +49,9 @@ struct imjaDNSApp: App {
     private let diagnosticsStore = Store(initialState: DiagnosticsFeature.State()) {
         DiagnosticsFeature()
     }
+    private let sitesStore = Store(initialState: SitesFeature.State()) {
+        SitesFeature()
+    }
     private let shareSyncStore = Store(initialState: ShareSyncFeature.State()) {
         ShareSyncFeature()
     }
@@ -73,6 +76,13 @@ struct imjaDNSApp: App {
             NavigationStack {
                 HomeView(store: homeStore, selectedTab: $selectedTab)
                     .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            NavigationLink {
+                                SitesView(store: sitesStore)
+                            } label: {
+                                Image(systemName: "globe")
+                            }
+                        }
                         ToolbarItem(placement: .topBarTrailing) {
                             NavigationLink {
                                 DiagnosticsView(store: diagnosticsStore)
