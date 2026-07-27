@@ -4,10 +4,32 @@
     "" : {
 
     },
+    "–" : {
+
+    },
+    "(need ≤%lld)" : {
+
+    },
+    "(need ≥%lld)" : {
+
+    },
     "#%lld" : {
 
     },
     "%@" : {
+
+    },
+    "%@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@ Mbps" : {
 
     },
     "%lld" : {
@@ -95,6 +117,9 @@
         }
       }
     },
+    "Add" : {
+
+    },
     "Add Custom DNS" : {
       "localizations" : {
         "el" : {
@@ -142,6 +167,9 @@
           }
         }
       }
+    },
+    "Add site" : {
+
     },
     "Apply" : {
       "localizations" : {
@@ -262,6 +290,18 @@
           }
         }
       }
+    },
+    "Check" : {
+
+    },
+    "Check all shown" : {
+
+    },
+    "Checking…" : {
+
+    },
+    "Choose a DNS profile" : {
+
     },
     "Clear" : {
       "localizations" : {
@@ -432,6 +472,9 @@
     "DNS changes will appear here" : {
 
     },
+    "DNS latency" : {
+
+    },
     "DNS Profile" : {
 
     },
@@ -468,6 +511,9 @@
       }
     },
     "DNS Setup" : {
+
+    },
+    "Domain (e.g. example.com)" : {
 
     },
     "Done" : {
@@ -715,6 +761,9 @@
     "Internet" : {
 
     },
+    "Internet speed" : {
+
+    },
     "IPTV" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -928,6 +977,9 @@
     "ms" : {
 
     },
+    "Name (optional)" : {
+
+    },
     "Netflix 4K" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1018,6 +1070,9 @@
           }
         }
       }
+    },
+    "No sites match. Add one with +." : {
+
     },
     "Not Enabled" : {
       "extractionState" : "stale",
@@ -1220,6 +1275,12 @@
         }
       }
     },
+    "Recent activity" : {
+
+    },
+    "Remove" : {
+
+    },
     "Report the DNS profile currently active." : {
 
     },
@@ -1321,6 +1382,9 @@
     "Run DNS Speed Test" : {
 
     },
+    "Run your first speed test to see download, upload and ping here." : {
+
+    },
     "Running checks…" : {
       "localizations" : {
         "el" : {
@@ -1370,6 +1434,12 @@
       }
     },
     "Scan this from another device's Share & Sync screen." : {
+
+    },
+    "Scenario" : {
+
+    },
+    "Search sites" : {
 
     },
     "Security cameras" : {
@@ -1441,6 +1511,9 @@
       }
     },
     "Show a profile's QR" : {
+
+    },
+    "Site Check" : {
 
     },
     "Smooth" : {
@@ -1571,10 +1644,14 @@
         }
       }
     },
+    "Tap any activity to see what it needs — run a test to check if your connection handles it." : {
+
+    },
     "Tap refresh to probe every provider and find the fastest for your network right now." : {
 
     },
     "Test" : {
+      "extractionState" : "stale",
       "localizations" : {
         "el" : {
           "stringUnit" : {
@@ -1820,6 +1897,12 @@
         }
       }
     },
+    "Website" : {
+
+    },
+    "What it needs" : {
+
+    },
     "When" : {
       "localizations" : {
         "el" : {
@@ -1855,13 +1938,22 @@
     "Wi-Fi name (SSID)" : {
 
     },
+    "Will add: %@" : {
+
+    },
     "Window" : {
+
+    },
+    "You're on your network's default DNS. Pick a profile to get faster, private resolution." : {
 
     },
     "You're using %@." : {
 
     },
     "Your active DNS is %@." : {
+
+    },
+    "Your connection" : {
 
     },
     "Your DNS profile is installed but switched off, so it isn't protecting you yet. Turn it on in Settings → General → VPN & Device Management → DNS." : {
