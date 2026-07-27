@@ -23,6 +23,8 @@ actor PersistenceManager {
         static let selectedCategory = "selectedCategory"
         static let speedTestResults = "speedTestResults"
         static let internetSpeedResult = "internetSpeedResult"
+        static let favoriteSiteDomains = "favoriteSiteDomains"
+        static let customSites = "customSites"
         static let automationRules = "automationRules"
         static let cellularDNSEnabled = "cellularDNSEnabled"
         static let cellularDNSProfileID = "cellularDNSProfileID"
@@ -32,7 +34,8 @@ actor PersistenceManager {
             customProfiles, favoriteIDs, connectionLog, activeProfileID,
             lastAppliedProfileID, lastUsedDNS, autoApplyDNS, hasCompletedOnboarding,
             hasShownDNSAlert, selectedCategory, speedTestResults, internetSpeedResult,
-            automationRules, cellularDNSEnabled, cellularDNSProfileID
+            favoriteSiteDomains, customSites, automationRules, cellularDNSEnabled,
+            cellularDNSProfileID
         ]
     }
 
@@ -134,6 +137,34 @@ actor PersistenceManager {
             return nil
         }
         return result
+    }
+
+    // MARK: - Site checker (favorites + custom sites, per user)
+
+    func saveFavoriteSiteDomains(_ domains: Set<String>) {
+        guard let data = try? encoder.encode(Array(domains)) else { return }
+        defaults.set(data, forKey: Keys.favoriteSiteDomains)
+    }
+
+    func loadFavoriteSiteDomains() -> Set<String> {
+        guard let data = defaults.data(forKey: Keys.favoriteSiteDomains),
+              let domains = try? decoder.decode([String].self, from: data) else {
+            return []
+        }
+        return Set(domains)
+    }
+
+    func saveCustomSites(_ sites: [Website]) {
+        guard let data = try? encoder.encode(sites) else { return }
+        defaults.set(data, forKey: Keys.customSites)
+    }
+
+    func loadCustomSites() -> [Website] {
+        guard let data = defaults.data(forKey: Keys.customSites),
+              let sites = try? decoder.decode([Website].self, from: data) else {
+            return []
+        }
+        return sites
     }
 
     // MARK: - Active Profile
